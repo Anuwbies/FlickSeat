@@ -95,7 +95,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginHorizontal="20dp"
         android:background="@drawable/text_input"
-        android:drawableStart="@drawable/lock"
+        android:drawableStart="@drawable/lock1"
         android:drawablePadding="7dp"
         android:hint="Password"
         android:inputType="textPassword"

@@ -13,13 +13,14 @@
         android:theme="@style/Theme.FlickSeat.Fullscreen"
         tools:targetApi="31">
         <activity
+            android:name=".Botnav"
+            android:exported="false" />
+        <activity
             android:name=".Signup"
-            android:exported="true">
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".Signin"
-            android:exported="true">
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".MainActivity"
             android:exported="true">

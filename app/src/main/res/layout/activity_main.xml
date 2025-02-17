@@ -6,8 +6,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    tools:context=".MainActivity">
+    android:background="@color/black"
+    tools:context=".app_activity.MainActivity">
 
     <ImageView
         android:id="@+id/imageView2"
@@ -20,7 +20,7 @@
 
     <ImageView
         android:id="@+id/gradient1"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="200dp"
         android:src="@drawable/gradient_bg"
         app:layout_constraintBottom_toBottomOf="@+id/imageView2"

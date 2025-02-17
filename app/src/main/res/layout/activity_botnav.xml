@@ -5,8 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    tools:context=".Botnav">
+    android:background="@color/black"
+    tools:context=".app_activity.Botnav">
 
     <FrameLayout
         android:id="@+id/fragment_container"
@@ -22,10 +22,13 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="@color/transparentbackground"
-        app:abb_indicatorAppearance="invisible"
         app:abb_indicatorHeight="4dp"
-        app:abb_indicatorLocation="bottom"
+        app:abb_indicatorLocation="top"
+        app:abb_indicatorColor="@color/purple"
+        app:abb_indicatorAppearance="round"
         app:abb_indicatorMargin="16dp"
+        app:abb_indicatorAnimation="slide"
+        app:abb_iconSize="25dp"
         app:abb_selectedIndex="1"
         app:abb_selectedTabId="@id/tab_home"
         app:abb_selectedTabType="text"
@@ -36,5 +39,4 @@
         app:layout_constraintBottom_toBottomOf="@+id/main"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

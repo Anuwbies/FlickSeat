@@ -9,10 +9,6 @@
             android:icon="@drawable/ticket"
             android:title="My Ticket" />
         <item
-            android:id="@+id/tab_search"
-            android:icon="@drawable/search"
-            android:title="Search" />
-        <item
             android:id="@+id/tab_account"
             android:icon="@drawable/user"
             android:title="Account" />

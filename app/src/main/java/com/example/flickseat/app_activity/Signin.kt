@@ -16,7 +16,7 @@ class Signin : AppCompatActivity() {
 
         val signIn_btn = findViewById<Button>(R.id.SignIn_button)
         signIn_btn.setOnClickListener {
-            val intent = Intent(this, Signup::class.java)
+            val intent = Intent(this, Botnav::class.java)
             startActivity(intent)
             finish()
         }

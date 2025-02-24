@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,52 +7,138 @@
     android:background="@color/black"
     tools:context=".home">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingHorizontal="20dp"
-        android:paddingTop="35dp">
+        android:fillViewport="true"
+        android:overScrollMode="never">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/textView6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Home"
-                android:textColor="@color/white"
-                android:textSize="35sp"
+            <ImageView
+                android:id="@+id/featured"
+                android:layout_width="match_parent"
+                android:layout_height="450dp"
+                android:scaleType="centerCrop"
+                android:src="@color/grey"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/money"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="7dp"
-                android:text="₱499"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/number"
-                app:layout_constraintTop_toTopOf="parent" />
-
             <ImageView
-                android:id="@+id/number"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/wallet"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                android:id="@+id/gradient"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:src="@drawable/gradient_bg"
+                app:layout_constraintBottom_toBottomOf="@+id/featured"
+                app:layout_constraintEnd_toEndOf="@+id/featured"
+                app:layout_constraintStart_toStartOf="@+id/featured" />
 
+            <com.blueiobase.api.android.strokedtextview.StrokedTextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="5dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:text="Title"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                app:textStrokeColor="@color/black"
+                app:textStrokeWidth="5"
+                app:layout_constraintBottom_toTopOf="@+id/genre"
+                app:layout_constraintEnd_toEndOf="@+id/featured"
+                app:layout_constraintStart_toStartOf="@+id/featured" />
+
+            <com.blueiobase.api.android.strokedtextview.StrokedTextView
+                android:id="@+id/genre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="15dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:text="Genre"
+                android:textAlignment="center"
+                android:textColor="@color/light_grey"
+                android:textSize="15sp"
+                app:textStrokeColor="@color/black"
+                app:textStrokeWidth="2"
+                app:layout_constraintBottom_toTopOf="@+id/book_ticket"
+                app:layout_constraintEnd_toEndOf="@+id/featured"
+                app:layout_constraintStart_toStartOf="@+id/featured" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/book_ticket"
+                android:layout_width="match_parent"
+                android:layout_height="45sp"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/btn"
+                android:text="Book a Seat"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="@+id/featured"
+                app:layout_constraintEnd_toEndOf="@+id/featured"
+                app:layout_constraintStart_toStartOf="@+id/featured" />
+
+            <com.blueiobase.api.android.strokedtextview.StrokedTextView
+                android:id="@+id/ns"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:text="Now Showing"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/featured" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/nowShowingRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:layout_marginTop="5dp"
+                android:overScrollMode="never"
+                android:background="@color/black"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ns" />
+
+            <com.blueiobase.api.android.strokedtextview.StrokedTextView
+                android:id="@+id/cs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:text="Coming Soon"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/nowShowingRV" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/comingSoonRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginHorizontal="5dp"
+                android:overScrollMode="never"
+                android:background="@color/black"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cs" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
 </FrameLayout>

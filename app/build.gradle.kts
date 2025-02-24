@@ -47,4 +47,13 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation ("nl.joery.animatedbottombar:library:1.1.0") // nav bar
+
+    implementation ("io.github.iodevblue:strokedtextview:1.0.0") // text with stroke
+
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0") // api
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    implementation ("com.github.bumptech.glide:glide:4.13.0") // image
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.13.0")
+
 }

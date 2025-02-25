@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/black">
+
+    <ImageView
+        android:id="@+id/ticket"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@drawable/ticket_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/moviePoster"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginVertical="10dp"
+        android:layout_marginStart="40dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintDimensionRatio="2:3"
+        app:layout_constraintBottom_toBottomOf="@+id/ticket"
+        app:layout_constraintStart_toStartOf="@+id/ticket"
+        app:layout_constraintTop_toTopOf="@+id/ticket"
+        app:srcCompat="@color/background" />
+
+    <com.blueiobase.api.android.strokedtextview.StrokedTextView
+        android:id="@+id/title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="20dp"
+        android:text="Title"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toStartOf="@+id/strokedTextView"
+        app:layout_constraintStart_toEndOf="@+id/moviePoster"
+        app:layout_constraintTop_toTopOf="@+id/ticket" />
+
+    <com.blueiobase.api.android.strokedtextview.StrokedTextView
+        android:id="@+id/date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:text="Date"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toStartOf="@+id/strokedTextView"
+        app:layout_constraintStart_toEndOf="@+id/moviePoster"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
+
+    <com.blueiobase.api.android.strokedtextview.StrokedTextView
+        android:id="@+id/strokedTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:rotation="90"
+        android:text="Seat No."
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/ticket"
+        app:layout_constraintEnd_toEndOf="@+id/ticket"
+        app:layout_constraintTop_toTopOf="@id/ticket" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

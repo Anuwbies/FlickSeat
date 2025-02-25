@@ -28,4 +28,10 @@ interface ApiService {
     @POST("coming_soon.php")
     fun getComingSoon(
     ): Call<MovieResponse>
+
+    @FormUrlEncoded
+    @POST("get_movie_details.php")
+    fun getMovieDetails(
+        @Field("tmdb_id") tmdbId: Int
+    ): Call<MovieResponse>
 }

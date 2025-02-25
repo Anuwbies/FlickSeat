@@ -1,6 +1,7 @@
 package com.example.flickseat.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.flickseat.R
+import com.example.flickseat.app_activity.Details
 import com.example.flickseat.database.Movie
 
 class NowShowingAdapter(
@@ -18,7 +20,7 @@ class NowShowingAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NowShowingViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_movie, parent, false)
-        // Convert 120dp and 8dp to pixels.
+        // Convert 100dp and 5dp to pixels.
         val itemWidthPx = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, 100f, context.resources.displayMetrics
         ).toInt()
@@ -60,6 +62,13 @@ class NowShowingAdapter(
                 moviePoster.setImageResource(resId)
             } else {
                 moviePoster.setImageResource(R.drawable.shonic)
+            }
+
+            // Set click listener to open Details activity and pass tmdb id.
+            itemView.setOnClickListener {
+                val intent = Intent(context, Details::class.java)
+                intent.putExtra("tmdb_id", movie.tmdb_id)
+                context.startActivity(intent)
             }
         }
     }

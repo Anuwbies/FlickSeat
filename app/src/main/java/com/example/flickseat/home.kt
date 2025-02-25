@@ -1,6 +1,7 @@
 package com.example.flickseat
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.flickseat.adapter.NowShowingAdapter
 import com.example.flickseat.adapter.ComingSoonAdapter
+import com.example.flickseat.app_activity.Details
 import com.example.flickseat.database.Movie
 import com.example.flickseat.database.MovieResponse
 import com.example.flickseat.database.RetrofitClient
@@ -35,7 +37,7 @@ class home : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Fetch and display featured now showing movie and set up the adapters.
+        // Fetch featured now showing movie and set up the adapters.
         fetchNowShowingMovies(view)
         fetchComingSoonMovies(view)
     }
@@ -79,7 +81,6 @@ class home : Fragment() {
                     val comingSoonResponse = response.body()
                     if (comingSoonResponse?.status == "success" && !comingSoonResponse.movies.isNullOrEmpty()) {
                         val comingSoonMovies = comingSoonResponse.movies
-                        // Set up ComingSoonAdapter for the RecyclerView with id comingSoonRV.
                         val comingSoonRV = view.findViewById<RecyclerView>(R.id.comingSoonRV)
                         comingSoonRV.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
                         comingSoonRV.adapter = ComingSoonAdapter(requireContext(), comingSoonMovies)
@@ -115,6 +116,13 @@ class home : Fragment() {
             featuredImageView.setImageResource(resId)
         } else {
             featuredImageView.setImageResource(R.drawable.shonic)
+        }
+
+        // Set click listener on the featured image to open Details activity with tmdb id.
+        featuredImageView.setOnClickListener {
+            val intent = Intent(context, Details::class.java)
+            intent.putExtra("tmdb_id", movie.tmdb_id)
+            context.startActivity(intent)
         }
     }
 }

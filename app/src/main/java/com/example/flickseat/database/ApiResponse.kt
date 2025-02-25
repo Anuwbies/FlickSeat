@@ -17,7 +17,7 @@ data class Movie(
     val title: String,
     val genre: String,
     val release_date: String,
-    val duration: String, // stored as TIME (e.g., "01:50:00")
+    val duration: String,
     val overview: String,
     val rating: Double,
     val tmdb_id: Int,

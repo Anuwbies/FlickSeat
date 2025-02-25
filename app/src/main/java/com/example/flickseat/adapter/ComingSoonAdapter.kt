@@ -30,7 +30,6 @@ class ComingSoonAdapter(
             TypedValue.COMPLEX_UNIT_DIP, 70f, context.resources.displayMetrics
         ).toInt()
 
-        // Set the item's height to MATCH_PARENT (fill RecyclerView's height) and fixed width.
         val layoutParams = view.layoutParams
         layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
         layoutParams.width = itemWidthPx

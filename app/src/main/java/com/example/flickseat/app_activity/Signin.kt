@@ -28,10 +28,8 @@ class Signin : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_signin)
 
-        // Navigation buttons
         val signInBtn = findViewById<Button>(R.id.SignIn_button)
         signInBtn.setOnClickListener {
-            // Before navigating to Botnav, perform the sign in call
             performSignIn()
         }
 
@@ -42,7 +40,6 @@ class Signin : AppCompatActivity() {
             finish()
         }
 
-        // Password toggle functionality
         val etPassword = findViewById<TextInputEditText>(R.id.etPassword)
         val passwordToggle = findViewById<ImageView>(R.id.password_toggle)
 
@@ -61,9 +58,7 @@ class Signin : AppCompatActivity() {
         }
     }
 
-    // Function to perform sign in using Retrofit
     private fun performSignIn() {
-        // Retrieve email and password values from EditTexts
         val etEmail = findViewById<TextInputEditText>(R.id.etEmail)
         val etPassword = findViewById<TextInputEditText>(R.id.etPassword)
 
@@ -76,10 +71,8 @@ class Signin : AppCompatActivity() {
             return
         }
 
-        // Create an instance of your API service
         val apiService: ApiService = RetrofitClient.instance
 
-        // Make the sign in call
         apiService.signIn(email, password).enqueue(object : Callback<ApiResponse> {
             override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
                 if (response.isSuccessful && response.body()?.status == "success") {

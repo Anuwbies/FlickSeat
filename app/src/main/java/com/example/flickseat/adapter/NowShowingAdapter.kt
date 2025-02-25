@@ -20,7 +20,6 @@ class NowShowingAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NowShowingViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_movie, parent, false)
-        // Convert 100dp and 5dp to pixels.
         val itemWidthPx = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, 100f, context.resources.displayMetrics
         ).toInt()
@@ -28,7 +27,6 @@ class NowShowingAdapter(
             TypedValue.COMPLEX_UNIT_DIP, 5f, context.resources.displayMetrics
         ).toInt()
 
-        // Set the height to MATCH_PARENT (to fill RecyclerView height) and a fixed width.
         val layoutParams = view.layoutParams
         layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
         layoutParams.width = itemWidthPx
@@ -64,7 +62,6 @@ class NowShowingAdapter(
                 moviePoster.setImageResource(R.drawable.shonic)
             }
 
-            // Set click listener to open Details activity and pass tmdb id.
             itemView.setOnClickListener {
                 val intent = Intent(context, Details::class.java)
                 intent.putExtra("tmdb_id", movie.tmdb_id)

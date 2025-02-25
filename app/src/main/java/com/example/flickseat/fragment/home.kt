@@ -1,4 +1,4 @@
-package com.example.flickseat
+package com.example.flickseat.fragment
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.flickseat.R
 import com.example.flickseat.adapter.NowShowingAdapter
 import com.example.flickseat.adapter.ComingSoonAdapter
 import com.example.flickseat.app_activity.Details
@@ -31,13 +32,11 @@ class home : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment.
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Fetch featured now showing movie and set up the adapters.
         fetchNowShowingMovies(view)
         fetchComingSoonMovies(view)
     }
@@ -100,7 +99,6 @@ class home : Fragment() {
 
     @SuppressLint("DiscouragedApi")
     private fun displayFeaturedMovie(movie: Movie, view: View) {
-        // Update the featured ImageView, title, and genre in the layout.
         val featuredImageView = view.findViewById<ImageView>(R.id.featured)
         val titleTextView = view.findViewById<TextView>(R.id.title)
         val genreTextView = view.findViewById<TextView>(R.id.genre)
@@ -108,9 +106,8 @@ class home : Fragment() {
         titleTextView.text = movie.title
         genreTextView.text = movie.genre
 
-        // Load image from drawable using the pattern "p{tmdb_id}"
         val context = view.context
-        val resourceName = "p${movie.tmdb_id}"  // e.g., "p939243"
+        val resourceName = "p${movie.tmdb_id}"
         val resId = context.resources.getIdentifier(resourceName, "drawable", context.packageName)
         if (resId != 0) {
             featuredImageView.setImageResource(resId)
@@ -118,7 +115,6 @@ class home : Fragment() {
             featuredImageView.setImageResource(R.drawable.shonic)
         }
 
-        // Set click listener on the featured image to open Details activity with tmdb id.
         featuredImageView.setOnClickListener {
             val intent = Intent(context, Details::class.java)
             intent.putExtra("tmdb_id", movie.tmdb_id)

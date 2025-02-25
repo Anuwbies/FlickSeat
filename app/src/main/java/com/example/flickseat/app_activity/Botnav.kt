@@ -4,9 +4,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.flickseat.R
-import com.example.flickseat.account
-import com.example.flickseat.home
-import com.example.flickseat.myticket
+import com.example.flickseat.fragment.account
+import com.example.flickseat.fragment.home
+import com.example.flickseat.fragment.myticket
 import nl.joery.animatedbottombar.AnimatedBottomBar
 
 class Botnav : AppCompatActivity() {

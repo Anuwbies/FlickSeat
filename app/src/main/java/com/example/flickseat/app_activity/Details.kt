@@ -2,17 +2,23 @@ package com.example.flickseat.app_activity
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.flickseat.R
+import com.example.flickseat.adapter.Trailer
+import com.example.flickseat.adapter.TrailerAdapter
 import com.example.flickseat.database.Movie
 import com.example.flickseat.database.MovieResponse
 import com.example.flickseat.database.RetrofitClient
+import com.example.flickseat.tmdb_api.TMDBClient
+import com.example.flickseat.tmdb_api.TMDBVideoResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,7 +32,6 @@ class Details : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_details)
 
-        // Get tmdb_id from intent extras.
         val tmdbId = intent.getIntExtra("tmdb_id", -1)
         if (tmdbId == -1) {
             Toast.makeText(this, "Invalid movie id", Toast.LENGTH_LONG).show()
@@ -35,6 +40,7 @@ class Details : AppCompatActivity() {
         }
 
         fetchMovieDetails(tmdbId)
+        fetchMovieTrailers(tmdbId)
     }
 
     private fun fetchMovieDetails(tmdbId: Int) {
@@ -43,7 +49,6 @@ class Details : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val movieResponse = response.body()
                     if (movieResponse?.status == "success" && !movieResponse.movies.isNullOrEmpty()) {
-                        // Expecting one movie.
                         val movie = movieResponse.movies.first()
                         displayMovieDetails(movie)
                     } else {
@@ -62,9 +67,34 @@ class Details : AppCompatActivity() {
         })
     }
 
+    private fun fetchMovieTrailers(tmdbId: Int) {
+        val apiKey = "47478fd8ee52c5b99e942674d01e0c32"
+        TMDBClient.instance.getMovieVideos(tmdbId, apiKey).enqueue(object : Callback<TMDBVideoResponse> {
+            override fun onResponse(call: Call<TMDBVideoResponse>, response: Response<TMDBVideoResponse>) {
+                if (response.isSuccessful) {
+                    val videoResponse = response.body()
+                    if (videoResponse != null && videoResponse.results.isNotEmpty()) {
+                        val trailers = videoResponse.results.filter {
+                            it.site.equals("YouTube", ignoreCase = true) && it.type.equals("Trailer", ignoreCase = true)
+                        }.map { Trailer(it.key, it.name) }
+
+                        displayTrailers(trailers)
+                    } else {
+                        Log.e(TAG, "No trailers found")
+                    }
+                } else {
+                    Log.e(TAG, "TMDB API error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<TMDBVideoResponse>, t: Throwable) {
+                Log.e(TAG, "TMDB Network error: ${t.message}", t)
+            }
+        })
+    }
+
     @SuppressLint("DiscouragedApi")
     private fun displayMovieDetails(movie: Movie) {
-        // Bind views from your layout.
         val posterImageView = findViewById<ImageView>(R.id.moviePoster)
         val titleTextView = findViewById<TextView>(R.id.tvTitle)
         val genreTextView = findViewById<TextView>(R.id.tvGenre)
@@ -73,7 +103,6 @@ class Details : AppCompatActivity() {
         val ratingTextView = findViewById<TextView>(R.id.tvRating)
         val overviewTextView = findViewById<TextView>(R.id.tvOverview)
 
-        // Set movie details.
         titleTextView.text = movie.title
         genreTextView.text = movie.genre
         dateTextView.text = "${movie.release_date}  •"
@@ -81,40 +110,31 @@ class Details : AppCompatActivity() {
         ratingTextView.text = "  ☆ ${movie.rating}"
         overviewTextView.text = movie.overview
 
-        // Load poster from drawable resource named "p{tmdb_id}".
         val resourceName = "p${movie.tmdb_id}"
         val resId = resources.getIdentifier(resourceName, "drawable", packageName)
         if (resId != 0) {
             posterImageView.setImageResource(resId)
         } else {
-            posterImageView.setImageResource(R.drawable.p939243)
+            posterImageView.setImageResource(R.drawable.shonic)
         }
 
-        // Set up click listeners to toggle expansion of title and overview.
-        // Initially, title and overview are set to a single line.
         titleTextView.maxLines = 1
         overviewTextView.maxLines = 3
 
         titleTextView.setOnClickListener {
-            // Toggle between one line and unlimited lines.
-            if (titleTextView.maxLines == 1) {
-                titleTextView.maxLines = Integer.MAX_VALUE
-                titleTextView.ellipsize = null
-            } else {
-                titleTextView.maxLines = 1
-                titleTextView.ellipsize = android.text.TextUtils.TruncateAt.END
-            }
+            titleTextView.maxLines = if (titleTextView.maxLines == 1) Integer.MAX_VALUE else 1
+            titleTextView.ellipsize = if (titleTextView.maxLines == 1) TextUtils.TruncateAt.END else null
         }
 
         overviewTextView.setOnClickListener {
-            // Toggle between 3 lines and unlimited lines.
-            if (overviewTextView.maxLines == 3) {
-                overviewTextView.maxLines = Integer.MAX_VALUE
-                overviewTextView.ellipsize = null
-            } else {
-                overviewTextView.maxLines = 3
-                overviewTextView.ellipsize = android.text.TextUtils.TruncateAt.END
-            }
+            overviewTextView.maxLines = if (overviewTextView.maxLines == 3) Integer.MAX_VALUE else 3
+            overviewTextView.ellipsize = if (overviewTextView.maxLines == 3) TextUtils.TruncateAt.END else null
         }
+    }
+
+    private fun displayTrailers(trailers: List<Trailer>) {
+        val trailerRV = findViewById<RecyclerView>(R.id.trailerRV)
+        trailerRV.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        trailerRV.adapter = TrailerAdapter(this, trailers)
     }
 }

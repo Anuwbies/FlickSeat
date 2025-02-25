@@ -29,3 +29,7 @@ data class MovieResponse(
     val movies: List<Movie>?,
     val message: String? = null
 )
+
+data class Trailer(
+    val youtubeId: String
+)

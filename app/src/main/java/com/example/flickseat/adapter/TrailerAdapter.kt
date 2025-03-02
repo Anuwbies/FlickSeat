@@ -32,7 +32,7 @@ class TrailerAdapter(
             TypedValue.COMPLEX_UNIT_DIP, 5f, context.resources.displayMetrics
         ).toInt()
         val bottomMarginPx = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, 50f, context.resources.displayMetrics
+            TypedValue.COMPLEX_UNIT_DIP, 100f, context.resources.displayMetrics
         ).toInt()
 
         val layoutParams = view.layoutParams

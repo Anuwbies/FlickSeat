@@ -13,7 +13,7 @@ data class User(
 )
 
 data class Movie(
-    val id: Int,
+    val movie_id: Int,
     val title: String,
     val genre: String,
     val release_date: String,
@@ -30,6 +30,24 @@ data class MovieResponse(
     val message: String? = null
 )
 
-data class Trailer(
-    val youtubeId: String
+data class Showtime(
+    val showtime_id: Int,
+    val show_day: String,
+    val show_time: String
+)
+
+data class ShowtimeResponse(
+    val status: String,
+    val showtimes: List<Showtime>?
+)
+
+data class Seat(
+    val seat_id: Int,
+    val seat_name: String,
+    val status: String // "available" or "taken"
+)
+
+data class SeatResponse(
+    val status: String,
+    val seats: List<Seat>?
 )

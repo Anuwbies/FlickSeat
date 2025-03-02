@@ -1,9 +1,12 @@
 package com.example.flickseat.app_activity
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
+import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -27,23 +30,32 @@ class Details : AppCompatActivity() {
 
     private val TAG = "DetailsActivity"
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_details)
 
+        val backButton = findViewById<ImageView>(R.id.back_btn)
+        val btnBookSeat = findViewById<Button>(R.id.btnBookSeat)
+
+        backButton.setOnClickListener {
+            finish()
+        }
+
         val tmdbId = intent.getIntExtra("tmdb_id", -1)
+
         if (tmdbId == -1) {
-            Toast.makeText(this, "Invalid movie id", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Invalid tmdb id", Toast.LENGTH_LONG).show()
             finish()
             return
         }
 
-        fetchMovieDetails(tmdbId)
+        fetchMovieDetails(tmdbId, btnBookSeat)
         fetchMovieTrailers(tmdbId)
     }
 
-    private fun fetchMovieDetails(tmdbId: Int) {
+    private fun fetchMovieDetails(tmdbId: Int, btnBookSeat: Button) {
         RetrofitClient.instance.getMovieDetails(tmdbId).enqueue(object : Callback<MovieResponse> {
             override fun onResponse(call: Call<MovieResponse>, response: Response<MovieResponse>) {
                 if (response.isSuccessful) {
@@ -51,6 +63,21 @@ class Details : AppCompatActivity() {
                     if (movieResponse?.status == "success" && !movieResponse.movies.isNullOrEmpty()) {
                         val movie = movieResponse.movies.first()
                         displayMovieDetails(movie)
+
+                        // Pass movie_id
+                        if (movie.status.equals("now showing", ignoreCase = true)) {
+                            btnBookSeat.visibility = View.VISIBLE
+                            btnBookSeat.isEnabled = true
+
+                            btnBookSeat.setOnClickListener {
+                                val intent = Intent(this@Details, SeatActivity::class.java)
+                                intent.putExtra("movie_id", movie.movie_id)  // Pass movie_id
+                                startActivity(intent)
+                            }
+                        } else {
+                            btnBookSeat.visibility = View.GONE
+                            btnBookSeat.isEnabled = false
+                        }
                     } else {
                         Toast.makeText(this@Details, "Movie details not found", Toast.LENGTH_LONG).show()
                     }

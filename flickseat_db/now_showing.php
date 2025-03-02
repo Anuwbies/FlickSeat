@@ -7,6 +7,7 @@ ini_set('display_errors', 1);
 
 include 'db_config.php';
 
+// Query all movies with status 'now showing'
 $sql = "SELECT * FROM movie WHERE status = 'now showing'";
 $result = $conn->query($sql);
 

@@ -3,9 +3,10 @@ package com.example.flickseat.app_activity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
+import android.text.method.HideReturnsTransformationMethod
 import android.util.Log
+import android.util.Patterns
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -26,6 +27,8 @@ class Signup : AppCompatActivity() {
     private var isPasswordVisible: Boolean = false
     private var isConfirmPasswordVisible: Boolean = false
     private val TAG = "SignupActivity"
+
+    private val passwordRegex = Regex("^(?=.*[0-9]).{8,16}\$")
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,11 +69,26 @@ class Signup : AppCompatActivity() {
                 Toast.makeText(this, "Please fill in all fields.", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
+            if (username.length < 3 || username.length > 8) {
+                Toast.makeText(this, "Username must be between 3 and 8 characters.", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                Toast.makeText(this, "Please enter a valid email address.", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            if (!passwordRegex.matches(password)) {
+                Toast.makeText(
+                    this,
+                    "Password must be 8-16 characters and contain at least one number.",
+                    Toast.LENGTH_LONG
+                ).show()
+                return@setOnClickListener
+            }
             if (password != confirmPassword) {
                 Toast.makeText(this, "Passwords do not match.", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-
             signUpUser(email, username, password)
         }
     }

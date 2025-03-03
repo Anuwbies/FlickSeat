@@ -3,6 +3,8 @@ package com.example.flickseat.app_activity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -33,9 +35,18 @@ class SeatActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_seat)
 
+        val backButton = findViewById<ImageView>(R.id.back_btn)
+        backButton.setOnClickListener {
+            finish()
+        }
+
         // Get movie ID from intent
         movieId = intent.getIntExtra("movie_id", 0)
-        Log.d("SeatActivity", "Received movie_id: $movieId")
+        val movieTitle = intent.getStringExtra("movie_title") ?: "Unknown Movie" // Default value if null
+
+        Log.d("SeatActivity", "Received movie_id: $movieId, movie_title: $movieTitle")
+
+        findViewById<TextView>(R.id.tvMovieTitle).text = movieTitle
 
         // Initialize RecyclerViews
         dayRecyclerView = findViewById(R.id.dayRV)

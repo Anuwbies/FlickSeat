@@ -45,13 +45,11 @@ class Signin : AppCompatActivity() {
 
         passwordToggle.setOnClickListener {
             if (isPasswordVisible) {
-                // Hide password
                 etPassword.transformationMethod = PasswordTransformationMethod.getInstance()
-                passwordToggle.setImageResource(R.drawable.closed_eye) // closed eye drawable
+                passwordToggle.setImageResource(R.drawable.closed_eye)
             } else {
-                // Show password
                 etPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
-                passwordToggle.setImageResource(R.drawable.open_eye) // open eye drawable
+                passwordToggle.setImageResource(R.drawable.open_eye)
             }
             isPasswordVisible = !isPasswordVisible
             etPassword.setSelection(etPassword.text?.length ?: 0)
@@ -65,7 +63,6 @@ class Signin : AppCompatActivity() {
         val email = etEmail.text.toString().trim()
         val password = etPassword.text.toString().trim()
 
-        // Validate that the fields are not empty
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Please fill in all fields.", Toast.LENGTH_LONG).show()
             return
@@ -77,7 +74,6 @@ class Signin : AppCompatActivity() {
             override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
                 if (response.isSuccessful && response.body()?.status == "success") {
                     Toast.makeText(this@Signin, "Login successful", Toast.LENGTH_LONG).show()
-                    // Navigate to Botnav (or your main app screen)
                     val intent = Intent(this@Signin, Botnav::class.java)
                     startActivity(intent)
                     finish()

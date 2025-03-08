@@ -37,13 +37,11 @@ interface ApiService {
         @Field("tmdb_id") tmdbId: Int
     ): Call<MovieResponse>
 
-    // Fetch available showtimes for a specific movie
     @GET("showtimes.php")
     fun getShowtimes(
         @Query("movie_id") movieId: Int
     ): Call<ShowtimeResponse>
 
-    // Fetch available seats for a specific showtime
     @GET("seats.php")
     fun getSeats(
         @Query("movie_id") movieId: Int,
@@ -51,7 +49,6 @@ interface ApiService {
         @Query("show_time") showTime: String
     ): Call<SeatResponse>
 
-    // Book a seat
     @FormUrlEncoded
     @POST("book_seat.php")
     fun bookSeat(

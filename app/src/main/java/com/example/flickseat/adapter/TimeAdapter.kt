@@ -12,11 +12,11 @@ import com.example.flickseat.R
 
 class TimeAdapter(
     private val times: List<String>,
-    private val isPlaceholder: Boolean = false, // Flag to determine if times are placeholders
+    private val isPlaceholder: Boolean = false,
     private val onTimeSelected: (String) -> Unit
 ) : RecyclerView.Adapter<TimeAdapter.TimeViewHolder>() {
 
-    private var selectedPosition = -1 // Track selected item
+    private var selectedPosition = -1
 
     class TimeViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvTime: TextView = view.findViewById(R.id.tvTime)
@@ -27,8 +27,8 @@ class TimeAdapter(
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_time, parent, false)
 
         val layoutParams = view.layoutParams as ViewGroup.MarginLayoutParams
-        layoutParams.marginStart = 8 // Left margin
-        layoutParams.marginEnd = 8   // Right margin
+        layoutParams.marginStart = 8
+        layoutParams.marginEnd = 8
 
         view.layoutParams = layoutParams
         return TimeViewHolder(view)
@@ -44,14 +44,13 @@ class TimeAdapter(
         val placeholderColor = ContextCompat.getColorStateList(context, R.color.light_grey)
 
         if (isPlaceholder) {
-            // Placeholder style: Light grey container, black text, no selection effect
             holder.container.imageTintList = placeholderColor
             holder.tvTime.setTextColor(ContextCompat.getColor(context, android.R.color.black))
-            holder.itemView.isEnabled = false // Disable click
-            holder.itemView.alpha = 0.5f // Reduce opacity for visual indication
+            holder.itemView.isEnabled = false
+            holder.itemView.alpha = 0.5f
         } else {
-            holder.itemView.isEnabled = true // Enable click for real times
-            holder.itemView.alpha = 1.0f // Normal opacity
+            holder.itemView.isEnabled = true
+            holder.itemView.alpha = 1.0f
 
             if (position == selectedPosition) {
                 holder.container.imageTintList = selectedColor
@@ -61,7 +60,6 @@ class TimeAdapter(
                 holder.tvTime.setTextColor(ContextCompat.getColor(context, android.R.color.black))
             }
 
-            // Handle click event
             holder.itemView.setOnClickListener {
                 val previousPosition = selectedPosition
                 selectedPosition = position

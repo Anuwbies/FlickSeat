@@ -15,7 +15,7 @@ class DayAdapter(
     private val onDaySelected: (String) -> Unit
 ) : RecyclerView.Adapter<DayAdapter.DayViewHolder>() {
 
-    private var selectedPosition = -1 // Track selected item
+    private var selectedPosition = -1
 
     class DayViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvDay: TextView = view.findViewById(R.id.tvDay)
@@ -26,8 +26,8 @@ class DayAdapter(
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_day, parent, false)
 
         val layoutParams = view.layoutParams as ViewGroup.MarginLayoutParams
-        layoutParams.marginStart = 8 // Left margin
-        layoutParams.marginEnd = 8   // Right margin
+        layoutParams.marginStart = 8
+        layoutParams.marginEnd = 8
 
         view.layoutParams = layoutParams
         return DayViewHolder(view)
@@ -37,7 +37,6 @@ class DayAdapter(
         val day = days[position]
         holder.tvDay.text = day
 
-        // Change background color when selected
         val context = holder.itemView.context
         val selectedColor = ContextCompat.getColorStateList(context, R.color.purple)
         val defaultColor = ContextCompat.getColorStateList(context, R.color.greytext)
@@ -50,7 +49,6 @@ class DayAdapter(
             holder.tvDay.setTextColor(ContextCompat.getColor(context, android.R.color.black))
         }
 
-        // Handle click event
         holder.itemView.setOnClickListener {
             val previousPosition = selectedPosition
             selectedPosition = position

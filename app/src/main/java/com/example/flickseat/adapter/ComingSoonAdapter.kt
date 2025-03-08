@@ -56,7 +56,7 @@ class ComingSoonAdapter(
         @Suppress("DiscouragedApi")
         fun bind(movie: Movie) {
             movieTitle.text = movie.title
-            // Construct resource name: "p{tmdb_id}"
+
             val resourceName = "p${movie.tmdb_id}"
             val resId = context.resources.getIdentifier(resourceName, "drawable", context.packageName)
             if (resId != 0) {
@@ -64,7 +64,7 @@ class ComingSoonAdapter(
             } else {
                 moviePoster.setImageResource(R.drawable.shonic)
             }
-            // On item click, pass the tmdb id to Details activity.
+
             itemView.setOnClickListener {
                 val intent = Intent(context, Details::class.java)
                 intent.putExtra("tmdb_id", movie.tmdb_id)

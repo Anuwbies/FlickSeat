@@ -179,4 +179,20 @@
         android:layout_marginTop="50dp"
         android:layout_marginStart="20dp"
         android:src="@drawable/back"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/book_ticket"
+        android:layout_width="match_parent"
+        android:layout_height="40sp"
+        android:layout_gravity="bottom"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/btn_purple"
+        android:text="Purchase ticket"
+        android:textAllCaps="false"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/featured"
+        app:layout_constraintEnd_toEndOf="@+id/featured"
+        app:layout_constraintStart_toStartOf="@+id/featured" />
 </FrameLayout>

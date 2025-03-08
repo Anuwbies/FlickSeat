@@ -76,10 +76,10 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/book_ticket"
                 android:layout_width="match_parent"
-                android:layout_height="45sp"
+                android:layout_height="40sp"
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginBottom="15dp"
-                android:background="@drawable/btn"
+                android:background="@drawable/btn_purple"
                 android:text="Book a seat"
                 android:textAllCaps="false"
                 android:textSize="20sp"

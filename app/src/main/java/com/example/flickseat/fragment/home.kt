@@ -49,7 +49,6 @@ class home : Fragment() {
                     val nowShowingResponse = response.body()
                     if (nowShowingResponse?.status == "success" && !nowShowingResponse.movies.isNullOrEmpty()) {
                         val movies = nowShowingResponse.movies
-                        // Pick one random movie as featured.
                         val randomIndex = Random(System.currentTimeMillis()).nextInt(movies.size)
                         val featuredMovie = movies[randomIndex]
                         displayFeaturedMovie(featuredMovie, view)

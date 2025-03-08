@@ -19,8 +19,8 @@ class SeatAdapter(
     private val onSeatsSelected: (List<Seat>) -> Unit
 ) : RecyclerView.Adapter<SeatAdapter.SeatViewHolder>() {
 
-    private val selectedSeats = mutableSetOf<Seat>() // Track selected seats
-    private val maxSelection = 5 // Maximum selectable seats
+    private val selectedSeats = mutableSetOf<Seat>()
+    private val maxSelection = 5
 
     class SeatViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvSeat: TextView = view.findViewById(R.id.tvSeat)
@@ -43,12 +43,12 @@ class SeatAdapter(
         layoutParams.setMargins(13, 13, 13, 13)
         holder.itemView.layoutParams = layoutParams
 
-        if (seat.seat_id == -1) { // Placeholder seat
+        if (seat.seat_id == -1) {
             holder.container.imageTintList = ColorStateList.valueOf(
                 ContextCompat.getColor(context, R.color.light_grey)
             )
             holder.tvSeat.setTextColor(ContextCompat.getColor(context, R.color.black))
-            holder.itemView.alpha = 0.5f // Dim placeholder seat
+            holder.itemView.alpha = 0.5f
             holder.itemView.isClickable = false
             holder.itemView.isEnabled = false
         } else { // Actual seat
@@ -68,7 +68,6 @@ class SeatAdapter(
                 holder.tvSeat.setTextColor(ContextCompat.getColor(context, android.R.color.white))
             }
 
-            // Apply selection effect
             if (selectedSeats.contains(seat)) {
                 holder.container.imageTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(context, R.color.purple)
@@ -76,21 +75,20 @@ class SeatAdapter(
                 holder.tvSeat.setTextColor(ContextCompat.getColor(context, android.R.color.white))
             }
 
-            // Handle click event for selectable seats
             holder.itemView.setOnClickListener {
                 if (seat.status == "available") {
                     if (selectedSeats.contains(seat)) {
                         selectedSeats.remove(seat) // Deselect
                     } else {
                         if (selectedSeats.size < maxSelection) {
-                            selectedSeats.add(seat) // Select if limit not reached
+                            selectedSeats.add(seat)
                         } else {
                             Toast.makeText(context, "You can select up to 5 seats only.", Toast.LENGTH_SHORT).show()
-                            return@setOnClickListener // Ignore click if limit reached
+                            return@setOnClickListener
                         }
                     }
-                    notifyItemChanged(position) // Update UI for this item
-                    onSeatsSelected(selectedSeats.toList()) // Notify selection change
+                    notifyItemChanged(position)
+                    onSeatsSelected(selectedSeats.toList())
                 }
             }
         }

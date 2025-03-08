@@ -57,11 +57,9 @@ class SeatActivity : AppCompatActivity() {
         timeRecyclerView.layoutManager = GridLayoutManager(this, 5)
         seatRecyclerView.layoutManager = GridLayoutManager(this, 6)
 
-        // Show placeholder seats when activity starts
         showPlaceholderTimes()
         showPlaceholderSeats()
 
-        // Fetch available showtimes
         fetchShowtimes()
     }
 
@@ -99,20 +97,19 @@ class SeatActivity : AppCompatActivity() {
         Log.d("SeatActivity", "Setting up day recycler with days: $days")
 
         dayRecyclerView.adapter = DayAdapter(days) { day ->
-            if (selectedDay != day) { // Only update if a NEW day is selected
+            if (selectedDay != day) {
                 selectedDay = day
                 Log.d("SeatActivity", "Selected Day: $selectedDay")
 
-                timeRecyclerView.visibility = View.VISIBLE // Show time selection
+                timeRecyclerView.visibility = View.VISIBLE
                 val timesForDay = allShowtimes.filter { it.show_day == day }.map { it.show_time }
 
                 if (timesForDay.isNotEmpty()) {
                     setupTimeRecyclerView(timesForDay)
                 } else {
-                    showPlaceholderTimes() // Keep placeholder times if no specific times exist
+                    showPlaceholderTimes()
                 }
 
-                // Reset seat selection when changing the day
                 selectedTime = ""
                 showPlaceholderSeats()
             } else {
@@ -171,20 +168,20 @@ class SeatActivity : AppCompatActivity() {
 
         val placeholderTimes = listOf("10:00am", "12:00pm", "4:00pm", "8:00pm", "12:00am")
 
-        setupTimeRecyclerView(placeholderTimes, isPlaceholder = true) // Mark as placeholder
+        setupTimeRecyclerView(placeholderTimes, isPlaceholder = true)
     }
 
     private fun showPlaceholderSeats() {
         Log.d("SeatActivity", "Displaying placeholder seats")
 
-        val rows = listOf("A", "B", "C", "D", "E") // Five rows
-        val cols = 6 // Six columns per row
+        val rows = listOf("A", "B", "C", "D", "E")
+        val cols = 6
 
         val placeholderSeats = mutableListOf<Seat>()
 
         for (row in rows) {
             for (col in 1..cols) {
-                val seatName = "$row$col" // Generates A1, A2, ..., E6
+                val seatName = "$row$col"
                 placeholderSeats.add(
                     Seat(
                         seat_id = -1,

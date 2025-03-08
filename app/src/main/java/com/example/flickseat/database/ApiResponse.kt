@@ -44,7 +44,7 @@ data class ShowtimeResponse(
 data class Seat(
     val seat_id: Int,
     val seat_name: String,
-    val status: String // "available" or "taken"
+    val status: String
 )
 
 data class SeatResponse(

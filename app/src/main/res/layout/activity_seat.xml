@@ -89,8 +89,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
-                android:overScrollMode="never"
                 android:layout_marginTop="20dp"
+                android:overScrollMode="never"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvScreen" />
@@ -199,7 +199,7 @@
             android:textColor="@color/white"/>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/book_ticket"
+            android:id="@+id/btnPrcdtoPayment"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:background="@drawable/btn_purple"

@@ -41,7 +41,8 @@ interface ApiService {
     @FormUrlEncoded
     @POST("get_movie_details.php")
     fun getMovieDetails(
-        @Field("tmdb_id") tmdbId: Int
+        @Field("tmdb_id") tmdbId: Int? = null,
+        @Field("movie_id") movieId: Int? = null
     ): Call<MovieResponse>
 
     @GET("showtimes.php")

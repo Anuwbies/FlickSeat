@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -26,12 +27,15 @@ class SeatActivity : AppCompatActivity() {
     private lateinit var timeRecyclerView: RecyclerView
     private lateinit var seatRecyclerView: RecyclerView
     private lateinit var priceTextView: TextView
+    private lateinit var movieTitleTextView: TextView
+    private lateinit var btnPrcdtoPayment: Button
 
     private var selectedDay: String = ""
     private var selectedTime: String = ""
     private var movieId: Int = 0
     private var moviePrice: Int = 0
     private lateinit var allShowtimes: List<Showtime>
+    private var selectedSeats: List<Seat> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,13 +49,10 @@ class SeatActivity : AppCompatActivity() {
 
         // Get movie ID from intent
         movieId = intent.getIntExtra("movie_id", 0)
-        moviePrice = intent.getIntExtra("movie_price", 0)
-        val movieTitle = intent.getStringExtra("movie_title") ?: "Unknown Movie" // Default value if null
 
-        Log.d("SeatActivity", "Received movie_id: $movieId, movie_title: $movieTitle")
-
-        findViewById<TextView>(R.id.tvMovieTitle).text = movieTitle
+        movieTitleTextView = findViewById(R.id.tvMovieTitle)
         priceTextView = findViewById(R.id.price)
+        btnPrcdtoPayment = findViewById(R.id.btnPrcdtoPayment)
 
         // Initialize RecyclerViews
         dayRecyclerView = findViewById(R.id.dayRV)
@@ -62,10 +63,41 @@ class SeatActivity : AppCompatActivity() {
         timeRecyclerView.layoutManager = GridLayoutManager(this, 5)
         seatRecyclerView.layoutManager = GridLayoutManager(this, 6)
 
+        fetchMovieDetails()
         showPlaceholderTimes()
         showPlaceholderSeats()
-
         fetchShowtimes()
+
+        // Button click listener to log details
+        btnPrcdtoPayment.setOnClickListener {
+            logSelectedDetails()
+        }
+    }
+
+    private fun fetchMovieDetails() {
+        Log.d("SeatActivity", "Fetching movie details for movie_id: $movieId")
+
+        RetrofitClient.instance.getMovieDetails(movieId = movieId).enqueue(object : Callback<MovieResponse> {
+            override fun onResponse(call: Call<MovieResponse>, response: Response<MovieResponse>) {
+                if (response.isSuccessful && response.body()?.status == "success") {
+                    val movie = response.body()?.movies?.firstOrNull()
+                    if (movie != null) {
+                        movieTitleTextView.text = movie.title
+                        moviePrice = movie.movie_price
+                        Log.d("SeatActivity", "Fetched movie: ${movie.title}, Price: ${movie.movie_price}")
+                    } else {
+                        showToast("Movie details not found")
+                    }
+                } else {
+                    showToast("Failed to fetch movie details")
+                }
+            }
+
+            override fun onFailure(call: Call<MovieResponse>, t: Throwable) {
+                Log.e("SeatActivity", "Error fetching movie details: ${t.message}")
+                showToast("Failed to load movie details")
+            }
+        })
     }
 
     private fun fetchShowtimes() {
@@ -73,8 +105,6 @@ class SeatActivity : AppCompatActivity() {
 
         RetrofitClient.instance.getShowtimes(movieId).enqueue(object : Callback<ShowtimeResponse> {
             override fun onResponse(call: Call<ShowtimeResponse>, response: Response<ShowtimeResponse>) {
-                Log.d("SeatActivity", "Showtime API Response Code: ${response.code()}")
-
                 if (response.isSuccessful && response.body()?.status == "success") {
                     allShowtimes = response.body()?.showtimes ?: emptyList()
                     val uniqueDays = allShowtimes.map { it.show_day }.distinct()
@@ -82,30 +112,23 @@ class SeatActivity : AppCompatActivity() {
                     if (uniqueDays.isNotEmpty()) {
                         setupDayRecyclerView(uniqueDays)
                     } else {
-                        Log.e("SeatActivity", "No available showtimes received")
                         showToast("No available showtimes")
                     }
                 } else {
-                    Log.e("SeatActivity", "Error: No successful response")
-                    showToast("No available showtimes")
+                    showToast("Failed to fetch showtimes")
                 }
             }
 
             override fun onFailure(call: Call<ShowtimeResponse>, t: Throwable) {
-                Log.e("SeatActivity", "Error fetching showtimes: ${t.message}")
                 showToast("Failed to load showtimes")
             }
         })
     }
 
     private fun setupDayRecyclerView(days: List<String>) {
-        Log.d("SeatActivity", "Setting up day recycler with days: $days")
-
         dayRecyclerView.adapter = DayAdapter(days) { day ->
             if (selectedDay != day) {
                 selectedDay = day
-                Log.d("SeatActivity", "Selected Day: $selectedDay")
-
                 timeRecyclerView.visibility = View.VISIBLE
                 val timesForDay = allShowtimes.filter { it.show_day == day }.map { it.show_time }
 
@@ -117,27 +140,20 @@ class SeatActivity : AppCompatActivity() {
 
                 selectedTime = ""
                 showPlaceholderSeats()
-            } else {
-                Log.d("SeatActivity", "Same day selected, keeping time selection.")
             }
         }
     }
 
     private fun setupTimeRecyclerView(times: List<String>, isPlaceholder: Boolean = false) {
-        Log.d("SeatActivity", "Setting up time recycler with times: $times (Placeholder: $isPlaceholder)")
-
         timeRecyclerView.adapter = TimeAdapter(times, isPlaceholder) { time ->
             if (!isPlaceholder && selectedTime != time) {
                 selectedTime = time
-                Log.d("SeatActivity", "Selected Time: $selectedTime")
                 fetchSeats()
             }
         }
     }
 
     private fun fetchSeats() {
-        Log.d("SeatActivity", "Fetching seats for movie_id: $movieId, day: '$selectedDay', time: '$selectedTime'")
-
         if (selectedDay.isEmpty() || selectedTime.isEmpty()) {
             showPlaceholderSeats()
             return
@@ -162,42 +178,46 @@ class SeatActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun setupSeatRecyclerView(seats: List<Seat>) {
-        Log.d("SeatActivity", "Setting up seat recycler with seats: $seats")
-
         seatRecyclerView.adapter = SeatAdapter(seats) { selectedSeats ->
-            Log.d("SeatActivity", "Selected seats: $selectedSeats")
-
-            // Calculate total price
+            this.selectedSeats = selectedSeats
             val totalPrice = selectedSeats.size * moviePrice
             priceTextView.text = "₱ $totalPrice"
         }
     }
 
+    private fun logSelectedDetails() {
+        val selectedShowtime = allShowtimes.find { it.show_day == selectedDay && it.show_time == selectedTime }
+        val showtimeId = selectedShowtime?.showtime_id ?: -1
+        val selectedSeatIds = selectedSeats.map { it.seat_id }
+
+        Log.d("SeatActivity", "Proceeding to payment with details:")
+        Log.d("SeatActivity", "Movie ID: $movieId")
+        Log.d("SeatActivity", "Showtime ID: $showtimeId")
+        Log.d("SeatActivity", "Selected Seats: $selectedSeatIds")
+        Log.d("SeatActivity", "Movie Price: ₱$moviePrice")
+
+        if (showtimeId == -1 || selectedSeats.isEmpty()) {
+            showToast("Please select a valid showtime and at least one seat.")
+            return
+        }
+
+        // Proceed to the next step (e.g., navigate to the payment screen)
+    }
+
     private fun showPlaceholderTimes() {
-        Log.d("SeatActivity", "Displaying placeholder showtimes")
-
         val placeholderTimes = listOf("10:00am", "12:00pm", "4:00pm", "8:00pm", "12:00am")
-
         setupTimeRecyclerView(placeholderTimes, isPlaceholder = true)
     }
 
     private fun showPlaceholderSeats() {
-        Log.d("SeatActivity", "Displaying placeholder seats")
-
         val rows = listOf("A", "B", "C", "D", "E")
         val cols = 6
 
         val placeholderSeats = mutableListOf<Seat>()
-
         for (row in rows) {
             for (col in 1..cols) {
-                val seatName = "$row$col"
                 placeholderSeats.add(
-                    Seat(
-                        seat_id = -1,
-                        seat_name = seatName,
-                        status = "available"
-                    )
+                    Seat(seat_id = -1, seat_name = "$row$col", status = "available")
                 )
             }
         }

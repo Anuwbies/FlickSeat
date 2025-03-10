@@ -127,8 +127,6 @@ class home : Fragment() {
         bookSeatButton.setOnClickListener {
             val intent = Intent(context, SeatActivity::class.java)
             intent.putExtra("movie_id", movie.movie_id) // Pass the movie_id
-            intent.putExtra("movie_title", movie.title)
-            intent.putExtra("movie_price", movie.movie_price)
             context.startActivity(intent)
         }
     }

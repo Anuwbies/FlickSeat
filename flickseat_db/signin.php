@@ -34,8 +34,7 @@ if ($result->num_rows > 0) {
             "user" => [
                 "user_id" => $user['user_id'], 
                 "email" => $user['email'],
-                "username" => $user['username'],
-                "profile_pic" => $user['profile_pic']
+                "username" => $user['username']
             ]
         ]);
     } else {

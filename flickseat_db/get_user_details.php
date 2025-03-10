@@ -14,7 +14,7 @@ if (empty($user_id)) {
     exit;
 }
 
-$sql = "SELECT username, email, profile_pic FROM users WHERE user_id = ?";
+$sql = "SELECT username, email FROM users WHERE user_id = ?";
 $stmt = $conn->prepare($sql);
 
 if (!$stmt) {

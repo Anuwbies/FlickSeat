@@ -9,8 +9,7 @@ data class UserResponse(
 data class User(
     val user_id: Int,
     val email: String,
-    val username: String,
-    val profile_pic: String
+    val username: String
 )
 
 data class Movie(

@@ -7,7 +7,7 @@
     android:background="@color/black">
 
     <ImageView
-        android:id="@+id/ticket"
+        android:id="@+id/ticket_bg"
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:background="@drawable/ticket_bg"
@@ -24,33 +24,50 @@
         android:layout_marginStart="40dp"
         android:scaleType="centerCrop"
         app:layout_constraintDimensionRatio="2:3"
-        app:layout_constraintBottom_toBottomOf="@+id/ticket"
-        app:layout_constraintStart_toStartOf="@+id/ticket"
-        app:layout_constraintTop_toTopOf="@+id/ticket"
+        app:layout_constraintBottom_toBottomOf="@+id/ticket_bg"
+        app:layout_constraintStart_toStartOf="@+id/ticket_bg"
+        app:layout_constraintTop_toTopOf="@+id/ticket_bg"
         app:srcCompat="@color/background" />
 
     <com.blueiobase.api.android.strokedtextview.StrokedTextView
-        android:id="@+id/title"
+        android:id="@+id/tvTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="20dp"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:text="Title"
         android:textSize="15sp"
         app:layout_constraintEnd_toStartOf="@+id/strokedTextView"
         app:layout_constraintStart_toEndOf="@+id/moviePoster"
-        app:layout_constraintTop_toTopOf="@+id/ticket" />
+        app:layout_constraintTop_toTopOf="@+id/ticket_bg" />
 
     <com.blueiobase.api.android.strokedtextview.StrokedTextView
-        android:id="@+id/date"
+        android:id="@+id/tvDay"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
-        android:text="Date"
+        android:text="Day"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:textSize="15sp"
         app:layout_constraintEnd_toStartOf="@+id/strokedTextView"
         app:layout_constraintStart_toEndOf="@+id/moviePoster"
-        app:layout_constraintTop_toBottomOf="@+id/title" />
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+
+    <com.blueiobase.api.android.strokedtextview.StrokedTextView
+        android:id="@+id/tvTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:text="Time"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toStartOf="@+id/strokedTextView"
+        app:layout_constraintStart_toEndOf="@+id/moviePoster"
+        app:layout_constraintTop_toBottomOf="@+id/tvDay" />
 
     <com.blueiobase.api.android.strokedtextview.StrokedTextView
         android:id="@+id/strokedTextView"
@@ -62,8 +79,8 @@
         android:textAlignment="center"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/ticket"
-        app:layout_constraintEnd_toEndOf="@+id/ticket"
-        app:layout_constraintTop_toTopOf="@id/ticket" />
+        app:layout_constraintBottom_toBottomOf="@id/ticket_bg"
+        app:layout_constraintEnd_toEndOf="@+id/ticket_bg"
+        app:layout_constraintTop_toTopOf="@id/ticket_bg" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,6 +8,9 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import android.view.inputmethod.EditorInfo
+import android.view.KeyEvent
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.flickseat.R
@@ -29,19 +32,20 @@ class Signin : AppCompatActivity() {
         setContentView(R.layout.activity_signin)
 
         val signInBtn = findViewById<Button>(R.id.SignIn_button)
+        val etEmail = findViewById<TextInputEditText>(R.id.etEmail)
+        val etPassword = findViewById<TextInputEditText>(R.id.etPassword)
+        val txtSignin = findViewById<TextView>(R.id.txt_signin)
+        val passwordToggle = findViewById<ImageView>(R.id.password_toggle)
+
         signInBtn.setOnClickListener {
             performSignIn()
         }
 
-        val txtSignin = findViewById<TextView>(R.id.txt_signin)
         txtSignin.setOnClickListener {
             val intent = Intent(this, Signup::class.java)
             startActivity(intent)
             finish()
         }
-
-        val etPassword = findViewById<TextInputEditText>(R.id.etPassword)
-        val passwordToggle = findViewById<ImageView>(R.id.password_toggle)
 
         passwordToggle.setOnClickListener {
             if (isPasswordVisible) {
@@ -53,6 +57,16 @@ class Signin : AppCompatActivity() {
             }
             isPasswordVisible = !isPasswordVisible
             etPassword.setSelection(etPassword.text?.length ?: 0)
+        }
+
+        // ✅ Pressing "Enter" triggers sign-in
+        etPassword.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN) {
+                performSignIn()
+                return@setOnEditorActionListener true
+            }
+            false
         }
     }
 
@@ -73,13 +87,15 @@ class Signin : AppCompatActivity() {
         apiService.signIn(email, password).enqueue(object : Callback<UserResponse> {
             override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                 if (response.isSuccessful && response.body()?.status == "success") {
-                    val userId = response.body()?.user?.user_id ?: -1 // ✅ Fixed reference to user_id
-                    saveUserSession(userId) // ✅ Save user ID
+                    val userId = response.body()?.user?.user_id ?: -1
+                    saveUserSession(userId)
 
                     Toast.makeText(this@Signin, "Login successful", Toast.LENGTH_LONG).show()
+
+                    // ✅ Clear previous activities and start Botnav
                     val intent = Intent(this@Signin, Botnav::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
-                    finish()
                 } else {
                     Toast.makeText(
                         this@Signin,
@@ -88,6 +104,7 @@ class Signin : AppCompatActivity() {
                     ).show()
                 }
             }
+
             override fun onFailure(call: Call<UserResponse>, t: Throwable) {
                 Toast.makeText(this@Signin, "Error: ${t.message}", Toast.LENGTH_LONG).show()
             }

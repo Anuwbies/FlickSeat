@@ -1,17 +1,22 @@
 package com.example.flickseat.fragment
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.example.flickseat.R
+import com.example.flickseat.app_activity.MainActivity
 import com.example.flickseat.database.ApiService
 import com.example.flickseat.database.RetrofitClient
 import com.example.flickseat.database.UserResponse
@@ -24,7 +29,7 @@ class account : Fragment() {
 
     private lateinit var tvUsername: TextView
     private lateinit var tvEmail: TextView
-    private lateinit var profilePic: ImageView
+    private lateinit var profilePic: TextView
     private lateinit var container: ImageView
     private lateinit var sharedPreferences: SharedPreferences
 
@@ -52,12 +57,18 @@ class account : Fragment() {
             Toast.makeText(requireContext(), "User not logged in!", Toast.LENGTH_LONG).show()
         }
 
+        val btnLogout: Button = view.findViewById(R.id.btnLog_out)
+        btnLogout.setOnClickListener {
+            showLogoutConfirmationDialog()
+        }
+
         return view
     }
 
     private fun fetchUserDetails(userId: Int) {
         val apiService: ApiService = RetrofitClient.instance
         apiService.getUserDetails(userId).enqueue(object : Callback<UserResponse> {
+            @SuppressLint("DiscouragedApi")
             override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                 if (response.isSuccessful && response.body()?.status == "success") {
                     val user = response.body()?.user
@@ -65,15 +76,12 @@ class account : Fragment() {
                         tvUsername.text = user.username
                         tvEmail.text = user.email
 
-                        // Set profile picture dynamically from drawable
-                        val resourceId = resources.getIdentifier(user.profile_pic, "drawable", requireActivity().packageName)
-                        if (resourceId != 0) {
-                            profilePic.setImageResource(resourceId)
-                        } else {
-                            profilePic.setImageResource(R.drawable.person) // Default profile pic
-                        }
+                        // Display first two letters of username in profilePic TextView
+                        profilePic.text = user.username.take(2).uppercase()
 
-                        profilePic.setColorFilter(Color.WHITE)
+                        // Set text color and background color
+                        profilePic.setTextColor(Color.WHITE)
+                        setRandomBackgroundColor()
                     }
                 } else {
                     Toast.makeText(requireContext(), "Failed to load user data.", Toast.LENGTH_LONG).show()
@@ -86,8 +94,57 @@ class account : Fragment() {
         })
     }
 
+    private fun showLogoutConfirmationDialog() {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_box, null)
+        val dialog = AlertDialog.Builder(requireContext()).setView(dialogView).create()
+
+        // Show dialog first to get Window attributes
+        dialog.show()
+
+        // Force dialog width to match the screen width
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.85).toInt(),  // 85% of screen width
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+
+        // Make background transparent for rounded corners effect
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        // Initialize buttons from dialog_box.xml
+        val btnCancel = dialogView.findViewById<Button>(R.id.btnCancel)
+        val btnLogout = dialogView.findViewById<Button>(R.id.btnLogout)
+
+        btnCancel.setOnClickListener {
+            dialog.dismiss() // Close the dialog
+        }
+
+        btnLogout.setOnClickListener {
+            dialog.dismiss() // Close the dialog
+            performLogout()  // Call logout function
+        }
+    }
+
+    private fun performLogout() {
+        // Clear user data from SharedPreferences
+        sharedPreferences.edit().clear().apply()
+
+        // Show a toast message for successful logout
+        Toast.makeText(requireContext(), "Logout successful!", Toast.LENGTH_SHORT).show()
+
+        // Navigate to MainActivity
+        val intent = Intent(requireActivity(), MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        requireActivity().finish()
+    }
+
     private fun setRandomBackgroundColor() {
-        val randomColor = Color.rgb(Random.nextInt(256), Random.nextInt(256), Random.nextInt(256))
-        container.setColorFilter(randomColor) // ✅ Keeps the circular shape intact
+        // Generate moderately light colors (values between 100 and 220)
+        val red = Random.nextInt(100, 220)
+        val green = Random.nextInt(100, 220)
+        val blue = Random.nextInt(100, 220)
+
+        val balancedLightColor = Color.rgb(red, green, blue)
+        container.setColorFilter(balancedLightColor)
     }
 }

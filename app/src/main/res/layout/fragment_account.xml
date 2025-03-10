@@ -27,23 +27,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
+            <TextView
                 android:id="@+id/profile_pic"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:src="@drawable/question"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="100sp"
+                android:gravity="center"
+                android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="@+id/container"
                 app:layout_constraintEnd_toEndOf="@+id/container"
                 app:layout_constraintStart_toStartOf="@+id/container"
                 app:layout_constraintTop_toTopOf="@+id/container" />
-
-            <ImageView
-                android:id="@+id/btnEdit_profile_pic"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/edit_icon"
-                app:layout_constraintBottom_toBottomOf="@+id/container"
-                app:layout_constraintEnd_toEndOf="@+id/container" />
 
             <TextView
                 android:id="@+id/tvUsername"
@@ -76,6 +70,7 @@
                 tools:layout_editor_absoluteX="10dp" />
 
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnLog_out"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_marginTop="70dp"

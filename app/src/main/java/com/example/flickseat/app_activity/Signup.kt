@@ -12,6 +12,8 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import android.view.inputmethod.EditorInfo
+import android.view.KeyEvent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.flickseat.R
@@ -37,16 +39,19 @@ class Signup : AppCompatActivity() {
         setContentView(R.layout.activity_signup)
 
         val txtSignup = findViewById<TextView>(R.id.txt_signup)
+        val etUsername = findViewById<EditText>(R.id.etUsername)
+        val etEmail = findViewById<EditText>(R.id.etEmail)
+        val etPassword = findViewById<EditText>(R.id.etPassword)
+        val etConfirmPassword = findViewById<EditText>(R.id.etConfirm_password)
+        val passwordToggle = findViewById<ImageView>(R.id.password_toggle)
+        val confirmPasswordToggle = findViewById<ImageView>(R.id.confirm_password_toggle)
+        val signUpBtn = findViewById<Button>(R.id.SignUp_button)
+
         txtSignup.setOnClickListener {
             val intent = Intent(this, Signin::class.java)
             startActivity(intent)
             finish()
         }
-
-        val etPassword = findViewById<EditText>(R.id.etPassword)
-        val etConfirmPassword = findViewById<EditText>(R.id.etConfirm_password)
-        val passwordToggle = findViewById<ImageView>(R.id.password_toggle)
-        val confirmPasswordToggle = findViewById<ImageView>(R.id.confirm_password_toggle)
 
         passwordToggle.setOnClickListener {
             togglePasswordVisibility(etPassword, passwordToggle, isPasswordVisible)
@@ -58,39 +63,58 @@ class Signup : AppCompatActivity() {
             isConfirmPasswordVisible = !isConfirmPasswordVisible
         }
 
-        val signUpBtn = findViewById<Button>(R.id.SignUp_button)
         signUpBtn.setOnClickListener {
-            val username = findViewById<EditText>(R.id.etUsername).text.toString().trim()
-            val email = findViewById<EditText>(R.id.etEmail).text.toString().trim()
-            val password = etPassword.text.toString().trim()
-            val confirmPassword = etConfirmPassword.text.toString().trim()
-
-            if (username.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
-                Toast.makeText(this, "Please fill in all fields.", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
-            if (username.length < 3 || username.length > 8) {
-                Toast.makeText(this, "Username must be between 3 and 8 characters.", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
-            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                Toast.makeText(this, "Please enter a valid email address.", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
-            if (!passwordRegex.matches(password)) {
-                Toast.makeText(
-                    this,
-                    "Password must be 8-16 characters and contain at least one number.",
-                    Toast.LENGTH_LONG
-                ).show()
-                return@setOnClickListener
-            }
-            if (password != confirmPassword) {
-                Toast.makeText(this, "Passwords do not match.", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
-            signUpUser(email, username, password)
+            validateAndSignUp(etUsername, etEmail, etPassword, etConfirmPassword)
         }
+
+        // ✅ Pressing "Enter" on Confirm Password Field triggers sign-up
+        etConfirmPassword.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN) {
+                validateAndSignUp(etUsername, etEmail, etPassword, etConfirmPassword)
+                return@setOnEditorActionListener true
+            }
+            false
+        }
+    }
+
+    private fun validateAndSignUp(
+        etUsername: EditText,
+        etEmail: EditText,
+        etPassword: EditText,
+        etConfirmPassword: EditText
+    ) {
+        val username = etUsername.text.toString().trim()
+        val email = etEmail.text.toString().trim()
+        val password = etPassword.text.toString().trim()
+        val confirmPassword = etConfirmPassword.text.toString().trim()
+
+        if (username.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+            Toast.makeText(this, "Please fill in all fields.", Toast.LENGTH_LONG).show()
+            return
+        }
+        if (username.length < 3 || username.length > 8) {
+            Toast.makeText(this, "Username must be between 3 and 8 characters.", Toast.LENGTH_LONG).show()
+            return
+        }
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(this, "Please enter a valid email address.", Toast.LENGTH_LONG).show()
+            return
+        }
+        if (!passwordRegex.matches(password)) {
+            Toast.makeText(
+                this,
+                "Password must be 8-16 characters and contain at least one number.",
+                Toast.LENGTH_LONG
+            ).show()
+            return
+        }
+        if (password != confirmPassword) {
+            Toast.makeText(this, "Passwords do not match.", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        signUpUser(email, username, password)
     }
 
     private fun signUpUser(email: String, username: String, password: String) {

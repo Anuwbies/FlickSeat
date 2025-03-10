@@ -16,6 +16,7 @@ import com.example.flickseat.R
 import com.example.flickseat.adapter.NowShowingAdapter
 import com.example.flickseat.adapter.ComingSoonAdapter
 import com.example.flickseat.app_activity.Details
+import com.example.flickseat.app_activity.SeatActivity
 import com.example.flickseat.database.Movie
 import com.example.flickseat.database.MovieResponse
 import com.example.flickseat.database.RetrofitClient
@@ -101,6 +102,7 @@ class home : Fragment() {
         val featuredImageView = view.findViewById<ImageView>(R.id.featured)
         val titleTextView = view.findViewById<TextView>(R.id.title)
         val genreTextView = view.findViewById<TextView>(R.id.genre)
+        val bookSeatButton = view.findViewById<View>(R.id.btnBookSeat)
 
         titleTextView.text = movie.title
         genreTextView.text = movie.genre
@@ -114,9 +116,19 @@ class home : Fragment() {
             featuredImageView.setImageResource(R.drawable.shonic)
         }
 
+        // Navigate to Details activity when clicking the featured image
         featuredImageView.setOnClickListener {
             val intent = Intent(context, Details::class.java)
             intent.putExtra("tmdb_id", movie.tmdb_id)
+            context.startActivity(intent)
+        }
+
+        // Navigate to SeatActivity when clicking the book button
+        bookSeatButton.setOnClickListener {
+            val intent = Intent(context, SeatActivity::class.java)
+            intent.putExtra("movie_id", movie.movie_id) // Pass the movie_id
+            intent.putExtra("movie_title", movie.title)
+            intent.putExtra("movie_price", movie.movie_price)
             context.startActivity(intent)
         }
     }

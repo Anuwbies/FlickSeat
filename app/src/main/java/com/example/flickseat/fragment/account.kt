@@ -1,60 +1,93 @@
 package com.example.flickseat.fragment
 
+import android.content.Context
+import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.example.flickseat.R
+import com.example.flickseat.database.ApiService
+import com.example.flickseat.database.RetrofitClient
+import com.example.flickseat.database.UserResponse
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import kotlin.random.Random
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [account.newInstance] factory method to
- * create an instance of this fragment.
- */
 class account : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var tvUsername: TextView
+    private lateinit var tvEmail: TextView
+    private lateinit var profilePic: ImageView
+    private lateinit var container: ImageView
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_account, container, false)
+        val view = inflater.inflate(R.layout.fragment_account, container, false)
+
+        // Initialize Views
+        tvUsername = view.findViewById(R.id.tvUsername)
+        tvEmail = view.findViewById(R.id.tvEmail)
+        profilePic = view.findViewById(R.id.profile_pic)
+        this.container = view.findViewById(R.id.container)
+
+        setRandomBackgroundColor()
+
+        // Get user ID from SharedPreferences
+        sharedPreferences = requireActivity().getSharedPreferences("UserData", Context.MODE_PRIVATE)
+        val userId = sharedPreferences.getInt("user_id", -1)
+
+        if (userId != -1) {
+            fetchUserDetails(userId)
+        } else {
+            Toast.makeText(requireContext(), "User not logged in!", Toast.LENGTH_LONG).show()
+        }
+
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment account.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            account().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun fetchUserDetails(userId: Int) {
+        val apiService: ApiService = RetrofitClient.instance
+        apiService.getUserDetails(userId).enqueue(object : Callback<UserResponse> {
+            override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
+                if (response.isSuccessful && response.body()?.status == "success") {
+                    val user = response.body()?.user
+                    if (user != null) {
+                        tvUsername.text = user.username
+                        tvEmail.text = user.email
+
+                        // Set profile picture dynamically from drawable
+                        val resourceId = resources.getIdentifier(user.profile_pic, "drawable", requireActivity().packageName)
+                        if (resourceId != 0) {
+                            profilePic.setImageResource(resourceId)
+                        } else {
+                            profilePic.setImageResource(R.drawable.person) // Default profile pic
+                        }
+
+                        profilePic.setColorFilter(Color.WHITE)
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Failed to load user data.", Toast.LENGTH_LONG).show()
                 }
             }
+
+            override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_LONG).show()
+            }
+        })
+    }
+
+    private fun setRandomBackgroundColor() {
+        val randomColor = Color.rgb(Random.nextInt(256), Random.nextInt(256), Random.nextInt(256))
+        container.setColorFilter(randomColor) // ✅ Keeps the circular shape intact
     }
 }

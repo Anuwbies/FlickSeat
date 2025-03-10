@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-03-02T05:37:23.879142100Z">
+        <DropdownSelection timestamp="2025-03-09T04:39:38.849358100Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\asiro\.android\avd\Copy_of_Pova_5_API_35.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\asiro\.android\avd\Copy_2_of_Pova_5_API_35.avd" />
             </handle>
           </Target>
         </DropdownSelection>

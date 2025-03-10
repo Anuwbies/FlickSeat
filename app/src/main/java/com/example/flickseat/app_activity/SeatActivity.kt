@@ -1,5 +1,6 @@
 package com.example.flickseat.app_activity
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -24,10 +25,12 @@ class SeatActivity : AppCompatActivity() {
     private lateinit var dayRecyclerView: RecyclerView
     private lateinit var timeRecyclerView: RecyclerView
     private lateinit var seatRecyclerView: RecyclerView
+    private lateinit var priceTextView: TextView
 
     private var selectedDay: String = ""
     private var selectedTime: String = ""
     private var movieId: Int = 0
+    private var moviePrice: Int = 0
     private lateinit var allShowtimes: List<Showtime>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,11 +45,13 @@ class SeatActivity : AppCompatActivity() {
 
         // Get movie ID from intent
         movieId = intent.getIntExtra("movie_id", 0)
+        moviePrice = intent.getIntExtra("movie_price", 0)
         val movieTitle = intent.getStringExtra("movie_title") ?: "Unknown Movie" // Default value if null
 
         Log.d("SeatActivity", "Received movie_id: $movieId, movie_title: $movieTitle")
 
         findViewById<TextView>(R.id.tvMovieTitle).text = movieTitle
+        priceTextView = findViewById(R.id.price)
 
         // Initialize RecyclerViews
         dayRecyclerView = findViewById(R.id.dayRV)
@@ -155,11 +160,16 @@ class SeatActivity : AppCompatActivity() {
         })
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setupSeatRecyclerView(seats: List<Seat>) {
         Log.d("SeatActivity", "Setting up seat recycler with seats: $seats")
 
         seatRecyclerView.adapter = SeatAdapter(seats) { selectedSeats ->
             Log.d("SeatActivity", "Selected seats: $selectedSeats")
+
+            // Calculate total price
+            val totalPrice = selectedSeats.size * moviePrice
+            priceTextView.text = "₱ $totalPrice"
         }
     }
 

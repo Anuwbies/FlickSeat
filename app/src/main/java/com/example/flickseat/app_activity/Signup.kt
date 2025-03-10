@@ -15,7 +15,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.flickseat.R
-import com.example.flickseat.database.ApiResponse
+import com.example.flickseat.database.UserResponse
 import com.example.flickseat.database.ApiService
 import com.example.flickseat.database.RetrofitClient
 import retrofit2.Call
@@ -97,8 +97,8 @@ class Signup : AppCompatActivity() {
         val apiService: ApiService = RetrofitClient.instance
 
         apiService.signUp(email, username, password)
-            .enqueue(object : Callback<ApiResponse> {
-                override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
+            .enqueue(object : Callback<UserResponse> {
+                override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                     if (response.isSuccessful) {
                         val responseBody = response.body()
                         Log.d(TAG, "Response: $responseBody")
@@ -118,7 +118,7 @@ class Signup : AppCompatActivity() {
                     }
                 }
 
-                override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
+                override fun onFailure(call: Call<UserResponse>, t: Throwable) {
                     Log.e(TAG, "Network error: ${t.message}", t)
                     Toast.makeText(this@Signup, "Error: ${t.message}", Toast.LENGTH_LONG).show()
                 }

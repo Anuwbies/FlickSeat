@@ -11,9 +11,9 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.flickseat.R
-import com.example.flickseat.database.ApiResponse
 import com.example.flickseat.database.ApiService
 import com.example.flickseat.database.RetrofitClient
+import com.example.flickseat.database.UserResponse
 import com.google.android.material.textfield.TextInputEditText
 import retrofit2.Call
 import retrofit2.Callback
@@ -70,9 +70,12 @@ class Signin : AppCompatActivity() {
 
         val apiService: ApiService = RetrofitClient.instance
 
-        apiService.signIn(email, password).enqueue(object : Callback<ApiResponse> {
-            override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
+        apiService.signIn(email, password).enqueue(object : Callback<UserResponse> {
+            override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                 if (response.isSuccessful && response.body()?.status == "success") {
+                    val userId = response.body()?.user?.user_id ?: -1 // ✅ Fixed reference to user_id
+                    saveUserSession(userId) // ✅ Save user ID
+
                     Toast.makeText(this@Signin, "Login successful", Toast.LENGTH_LONG).show()
                     val intent = Intent(this@Signin, Botnav::class.java)
                     startActivity(intent)
@@ -85,9 +88,18 @@ class Signin : AppCompatActivity() {
                     ).show()
                 }
             }
-            override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
+            override fun onFailure(call: Call<UserResponse>, t: Throwable) {
                 Toast.makeText(this@Signin, "Error: ${t.message}", Toast.LENGTH_LONG).show()
             }
         })
+    }
+
+    // ✅ Save User Session
+    private fun saveUserSession(userId: Int) {
+        val sharedPreferences = getSharedPreferences("UserData", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putInt("user_id", userId)
+        editor.putBoolean("is_logged_in", true)
+        editor.apply()
     }
 }

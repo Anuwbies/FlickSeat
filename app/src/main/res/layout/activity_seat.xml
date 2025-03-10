@@ -142,7 +142,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingStart="5dp"
-                        android:text="Taken"
+                        android:text="Booked"
                         android:textColor="@color/white"
                         android:textSize="15sp" />
                 </LinearLayout>
@@ -180,19 +180,32 @@
         android:layout_marginStart="20dp"
         android:src="@drawable/back"/>
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/book_ticket"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="40sp"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginBottom="30dp"
-        android:background="@drawable/btn_purple"
-        android:text="Purchase ticket"
-        android:textAllCaps="false"
-        android:textSize="20sp"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/featured"
-        app:layout_constraintEnd_toEndOf="@+id/featured"
-        app:layout_constraintStart_toStartOf="@+id/featured" />
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="30dp">
+
+        <TextView
+            android:id="@+id/price"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:text="₱ 0"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:layout_gravity="center"
+            android:textColor="@color/white"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/book_ticket"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/btn_purple"
+            android:text="Proceed to Payment"
+            android:textAllCaps="false"
+            android:textSize="20sp"
+            android:textColor="@color/white" />
+    </LinearLayout>
 </FrameLayout>

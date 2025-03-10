@@ -32,9 +32,18 @@ class SeatAdapter(
         return SeatViewHolder(view)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(holder: SeatViewHolder, @SuppressLint("RecyclerView") position: Int) {
         val seat = seats[position]
         val context = holder.itemView.context
+
+        // Caching colors for optimization
+        val greyColor = ContextCompat.getColor(context, R.color.greytext)
+        val redColor = ContextCompat.getColor(context, R.color.red)
+        val purpleColor = ContextCompat.getColor(context, R.color.purple)
+        val lightGreyColor = ContextCompat.getColor(context, R.color.light_grey)
+        val blackColor = ContextCompat.getColor(context, android.R.color.black)
+        val whiteColor = ContextCompat.getColor(context, android.R.color.white)
 
         holder.tvSeat.text = seat.seat_name
 
@@ -44,35 +53,34 @@ class SeatAdapter(
         holder.itemView.layoutParams = layoutParams
 
         if (seat.seat_id == -1) {
-            holder.container.imageTintList = ColorStateList.valueOf(
-                ContextCompat.getColor(context, R.color.light_grey)
-            )
-            holder.tvSeat.setTextColor(ContextCompat.getColor(context, R.color.black))
+            // Placeholder seat (disabled)
+            holder.container.imageTintList = ColorStateList.valueOf(lightGreyColor)
+            holder.tvSeat.setTextColor(blackColor)
             holder.itemView.alpha = 0.5f
             holder.itemView.isClickable = false
             holder.itemView.isEnabled = false
-        } else { // Actual seat
+        } else {
+            // Actual seat
             holder.itemView.alpha = 1.0f
             holder.itemView.isClickable = true
             holder.itemView.isEnabled = true
 
-            if (seat.status == "available") {
-                holder.container.imageTintList = ColorStateList.valueOf(
-                    ContextCompat.getColor(context, R.color.greytext)
-                )
-                holder.tvSeat.setTextColor(ContextCompat.getColor(context, android.R.color.black))
-            } else {
-                holder.container.imageTintList = ColorStateList.valueOf(
-                    ContextCompat.getColor(context, R.color.red)
-                )
-                holder.tvSeat.setTextColor(ContextCompat.getColor(context, android.R.color.white))
-            }
-
-            if (selectedSeats.contains(seat)) {
-                holder.container.imageTintList = ColorStateList.valueOf(
-                    ContextCompat.getColor(context, R.color.purple)
-                )
-                holder.tvSeat.setTextColor(ContextCompat.getColor(context, android.R.color.white))
+            when {
+                selectedSeats.contains(seat) -> {
+                    // Selected seat
+                    holder.container.imageTintList = ColorStateList.valueOf(purpleColor)
+                    holder.tvSeat.setTextColor(whiteColor)
+                }
+                seat.status == "available" -> {
+                    // Available seat
+                    holder.container.imageTintList = ColorStateList.valueOf(greyColor)
+                    holder.tvSeat.setTextColor(blackColor)
+                }
+                else -> {
+                    // Booked seat
+                    holder.container.imageTintList = ColorStateList.valueOf(redColor)
+                    holder.tvSeat.setTextColor(whiteColor)
+                }
             }
 
             holder.itemView.setOnClickListener {
@@ -87,7 +95,7 @@ class SeatAdapter(
                             return@setOnClickListener
                         }
                     }
-                    notifyItemChanged(position)
+                    notifyDataSetChanged() // Ensures smooth UI updates
                     onSeatsSelected(selectedSeats.toList())
                 }
             }

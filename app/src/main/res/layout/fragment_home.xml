@@ -69,12 +69,12 @@
                 android:textSize="15sp"
                 app:textStrokeColor="@color/black"
                 app:textStrokeWidth="2"
-                app:layout_constraintBottom_toTopOf="@+id/book_ticket"
+                app:layout_constraintBottom_toTopOf="@+id/btnBookSeat"
                 app:layout_constraintEnd_toEndOf="@+id/featured"
                 app:layout_constraintStart_toStartOf="@+id/featured" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/book_ticket"
+                android:id="@+id/btnBookSeat"
                 android:layout_width="match_parent"
                 android:layout_height="40sp"
                 android:layout_marginHorizontal="10dp"

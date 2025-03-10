@@ -13,19 +13,25 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        val signIn_btn = findViewById<Button>(R.id.SignIn_button)
+        val sharedPreferences = getSharedPreferences("UserData", MODE_PRIVATE)
+        val isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false)
 
-        signIn_btn.setOnClickListener {
+        if (isLoggedIn) {
+            // ✅ User is logged in, go to Botnav
+            startActivity(Intent(this, Botnav::class.java))
+            finish() // ✅ Close MainActivity
+        }
+
+        val signInBtn = findViewById<Button>(R.id.SignIn_button)
+        signInBtn.setOnClickListener {
             val intent = Intent(this, Signin::class.java)
             startActivity(intent)
         }
 
-        val signUp_btn = findViewById<Button>(R.id.SignUp_button)
-
-        signUp_btn.setOnClickListener {
+        val signUpBtn = findViewById<Button>(R.id.SignUp_button)
+        signUpBtn.setOnClickListener {
             val intent = Intent(this, Signup::class.java)
             startActivity(intent)
         }
     }
-
 }

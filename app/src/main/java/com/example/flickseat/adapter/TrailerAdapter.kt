@@ -26,7 +26,7 @@ class TrailerAdapter(
         val view = LayoutInflater.from(context).inflate(R.layout.item_trailer, parent, false)
 
         val itemWidthPx = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, 160f, context.resources.displayMetrics
+            TypedValue.COMPLEX_UNIT_DIP, 150f, context.resources.displayMetrics
         ).toInt()
         val sideMarginPx = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, 5f, context.resources.displayMetrics
@@ -58,10 +58,12 @@ class TrailerAdapter(
         private val trailerImage: ImageView = itemView.findViewById(R.id.trailer)
 
         fun bind(trailer: Trailer) {
+            trailerImage.setImageResource(R.color.greytext)
+
             val thumbnailUrl = "https://img.youtube.com/vi/${trailer.youtubeId}/hqdefault.jpg"
             Glide.with(context)
                 .load(thumbnailUrl)
-                .placeholder(R.drawable.shonic)
+                .placeholder(R.color.greytext)
                 .into(trailerImage)
 
             itemView.setOnClickListener {

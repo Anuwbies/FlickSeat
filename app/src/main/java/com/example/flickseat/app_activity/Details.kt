@@ -73,6 +73,7 @@ class Details : AppCompatActivity() {
                                 val intent = Intent(this@Details, SeatActivity::class.java)
                                 intent.putExtra("movie_id", movie.movie_id)  // Pass movie_id
                                 intent.putExtra("movie_title", movie.title)
+                                intent.putExtra("movie_price", movie.movie_price)
                                 startActivity(intent)
                             }
                         } else {
@@ -121,7 +122,7 @@ class Details : AppCompatActivity() {
         })
     }
 
-    @SuppressLint("DiscouragedApi")
+    @SuppressLint("DiscouragedApi", "SetTextI18n")
     private fun displayMovieDetails(movie: Movie) {
         val posterImageView = findViewById<ImageView>(R.id.moviePoster)
         val titleTextView = findViewById<TextView>(R.id.tvTitle)

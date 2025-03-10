@@ -1,15 +1,16 @@
 package com.example.flickseat.database
 
-data class ApiResponse(
+data class UserResponse(
     val status: String,
     val message: String,
     val user: User? = null
 )
 
 data class User(
-    val id: Int,
+    val user_id: Int,
     val email: String,
-    val username: String
+    val username: String,
+    val profile_pic: String
 )
 
 data class Movie(
@@ -21,7 +22,8 @@ data class Movie(
     val overview: String,
     val rating: Double,
     val tmdb_id: Int,
-    val status: String
+    val status: String,
+    val movie_price: Int
 )
 
 data class MovieResponse(

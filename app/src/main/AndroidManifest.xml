@@ -16,9 +16,6 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".app_activity.PaymentActivity"
-            android:exported="false" />
-        <activity
             android:name=".app_activity.Details"
             android:exported="false" />
         <activity
@@ -28,10 +25,10 @@
             android:name=".app_activity.Botnav"
             android:exported="true"/>
         <activity
-            android:name=".app_activity.SignupActivity"
+            android:name=".app_activity.Signup"
             android:exported="true"/>
         <activity
-            android:name=".app_activity.SigninActivity"
+            android:name=".app_activity.Signin"
             android:exported="true"/>
         <activity
             android:name=".app_activity.MainActivity"

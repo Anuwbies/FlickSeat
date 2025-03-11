@@ -60,7 +60,7 @@
             android:drawablePadding="7dp"
             android:layout_marginTop="30dp"
             android:hint="Username"
-            android:inputType="textEmailAddress"
+            android:inputType="text"
             android:maxLines="1"
             android:paddingHorizontal="10dp"
             android:textColor="@color/white"

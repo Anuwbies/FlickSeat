@@ -29,7 +29,7 @@ class account : Fragment() {
 
     private lateinit var tvUsername: TextView
     private lateinit var tvEmail: TextView
-    private lateinit var profilePic: TextView
+    private lateinit var profileText: TextView
     private lateinit var container: ImageView
     private lateinit var sharedPreferences: SharedPreferences
 
@@ -42,7 +42,7 @@ class account : Fragment() {
         // Initialize Views
         tvUsername = view.findViewById(R.id.tvUsername)
         tvEmail = view.findViewById(R.id.tvEmail)
-        profilePic = view.findViewById(R.id.profile_pic)
+        profileText = view.findViewById(R.id.profile_text)
         this.container = view.findViewById(R.id.container)
 
         setRandomBackgroundColor()
@@ -77,10 +77,10 @@ class account : Fragment() {
                         tvEmail.text = user.email
 
                         // Display first two letters of username in profilePic TextView
-                        profilePic.text = user.username.take(2).uppercase()
+                        profileText.text = user.username.take(2).uppercase()
 
                         // Set text color and background color
-                        profilePic.setTextColor(Color.WHITE)
+                        profileText.setTextColor(Color.WHITE)
                         setRandomBackgroundColor()
                     }
                 } else {

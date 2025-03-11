@@ -22,7 +22,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class SignupActivity : AppCompatActivity() {
+class Signup : AppCompatActivity() {
 
     private var isPasswordVisible: Boolean = false
     private var isConfirmPasswordVisible: Boolean = false
@@ -38,7 +38,7 @@ class SignupActivity : AppCompatActivity() {
 
         val txtSignup = findViewById<TextView>(R.id.txt_signup)
         txtSignup.setOnClickListener {
-            val intent = Intent(this, SigninActivity::class.java)
+            val intent = Intent(this, Signin::class.java)
             startActivity(intent)
             finish()
         }
@@ -104,23 +104,23 @@ class SignupActivity : AppCompatActivity() {
                         Log.d(TAG, "Response: $responseBody")
 
                         if (responseBody?.status == "success") {
-                            Toast.makeText(this@SignupActivity, "User registered successfully!", Toast.LENGTH_LONG).show()
-                            val intent = Intent(this@SignupActivity, SignupActivity::class.java)
+                            Toast.makeText(this@Signup, "User registered successfully!", Toast.LENGTH_LONG).show()
+                            val intent = Intent(this@Signup, Signin::class.java)
                             startActivity(intent)
                             finish()
                         } else {
                             Log.e(TAG, "Signup failed: ${responseBody?.message}")
-                            Toast.makeText(this@SignupActivity, responseBody?.message ?: "Registration failed.", Toast.LENGTH_LONG).show()
+                            Toast.makeText(this@Signup, responseBody?.message ?: "Registration failed.", Toast.LENGTH_LONG).show()
                         }
                     } else {
                         Log.e(TAG, "Server returned an error: ${response.errorBody()?.string()}")
-                        Toast.makeText(this@SignupActivity, "Registration failed: ${response.message()}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@Signup, "Registration failed: ${response.message()}", Toast.LENGTH_LONG).show()
                     }
                 }
 
                 override fun onFailure(call: Call<UserResponse>, t: Throwable) {
                     Log.e(TAG, "Network error: ${t.message}", t)
-                    Toast.makeText(this@SignupActivity, "Error: ${t.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@Signup, "Error: ${t.message}", Toast.LENGTH_LONG).show()
                 }
             })
     }

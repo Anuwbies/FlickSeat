@@ -5,9 +5,8 @@ header("Access-Control-Allow-Origin: *");
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-include 'db_config.php';
+include 'db_config.php'; // contains your DB connection details
 
-// Retrieve POST parameters.
 $email = $_POST['email'] ?? '';
 $username = $_POST['username'] ?? '';
 $password = $_POST['password'] ?? '';
@@ -17,10 +16,8 @@ if (empty($email) || empty($username) || empty($password)) {
     exit;
 }
 
-// Hash the password.
 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-// Prepare SQL statement.
 $sql = "INSERT INTO users (email, username, password) VALUES (?, ?, ?)";
 $stmt = $conn->prepare($sql);
 if (!$stmt) {

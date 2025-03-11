@@ -10,7 +10,6 @@ import android.widget.TextView
 import android.widget.Toast
 import android.view.inputmethod.EditorInfo
 import android.view.KeyEvent
-import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.flickseat.R
@@ -22,7 +21,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class Signin : AppCompatActivity() {
+class SigninActivity : AppCompatActivity() {
 
     private var isPasswordVisible: Boolean = false
 
@@ -42,7 +41,7 @@ class Signin : AppCompatActivity() {
         }
 
         txtSignin.setOnClickListener {
-            val intent = Intent(this, Signup::class.java)
+            val intent = Intent(this, SignupActivity::class.java)
             startActivity(intent)
             finish()
         }
@@ -90,15 +89,15 @@ class Signin : AppCompatActivity() {
                     val userId = response.body()?.user?.user_id ?: -1
                     saveUserSession(userId)
 
-                    Toast.makeText(this@Signin, "Login successful", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@SigninActivity, "Login successful", Toast.LENGTH_LONG).show()
 
                     // ✅ Clear previous activities and start Botnav
-                    val intent = Intent(this@Signin, Botnav::class.java)
+                    val intent = Intent(this@SigninActivity, Botnav::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
                 } else {
                     Toast.makeText(
-                        this@Signin,
+                        this@SigninActivity,
                         response.body()?.message ?: "Login failed.",
                         Toast.LENGTH_LONG
                     ).show()
@@ -106,7 +105,7 @@ class Signin : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<UserResponse>, t: Throwable) {
-                Toast.makeText(this@Signin, "Error: ${t.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@SigninActivity, "Error: ${t.message}", Toast.LENGTH_LONG).show()
             }
         })
     }

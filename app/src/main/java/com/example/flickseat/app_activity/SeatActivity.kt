@@ -17,6 +17,7 @@ import com.example.flickseat.adapter.SeatAdapter
 import com.example.flickseat.adapters.DayAdapter
 import com.example.flickseat.adapters.TimeAdapter
 import com.example.flickseat.database.*
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -70,7 +71,11 @@ class SeatActivity : AppCompatActivity() {
 
         // Button click listener to log details
         btnPrcdtoPayment.setOnClickListener {
-            logSelectedDetails()
+            if (selectedSeats.isEmpty()) {
+                Toast.makeText(this, "Please select a seat to proceed.", Toast.LENGTH_SHORT).show()
+            } else {
+                showPaymentBottomSheet()
+            }
         }
     }
 
@@ -129,6 +134,9 @@ class SeatActivity : AppCompatActivity() {
         dayRecyclerView.adapter = DayAdapter(days) { day ->
             if (selectedDay != day) {
                 selectedDay = day
+                selectedSeats = emptyList() // Reset selected seats
+                priceTextView.text = "₱ 0" // Reset displayed price
+
                 timeRecyclerView.visibility = View.VISIBLE
                 val timesForDay = allShowtimes.filter { it.show_day == day }.map { it.show_time }
 
@@ -148,6 +156,8 @@ class SeatActivity : AppCompatActivity() {
         timeRecyclerView.adapter = TimeAdapter(times, isPlaceholder) { time ->
             if (!isPlaceholder && selectedTime != time) {
                 selectedTime = time
+                selectedSeats = emptyList() // Reset selected seats
+                priceTextView.text = "₱ 0" // Reset displayed price
                 fetchSeats()
             }
         }
@@ -180,28 +190,101 @@ class SeatActivity : AppCompatActivity() {
     private fun setupSeatRecyclerView(seats: List<Seat>) {
         seatRecyclerView.adapter = SeatAdapter(seats) { selectedSeats ->
             this.selectedSeats = selectedSeats
-            val totalPrice = selectedSeats.size * moviePrice
-            priceTextView.text = "₱ $totalPrice"
+            priceTextView.text = "₱ ${selectedSeats.size * moviePrice}"
         }
     }
 
-    private fun logSelectedDetails() {
+    private var bottomSheetDialog: BottomSheetDialog? = null
+    private var selectedPaymentMethod: Button? = null // Track selected payment method
+
+    @SuppressLint("SetTextI18n")
+    private fun showPaymentBottomSheet() {
+        if (bottomSheetDialog != null && bottomSheetDialog!!.isShowing) {
+            return // Prevent multiple dialogs from opening
+        }
+
+        bottomSheetDialog = BottomSheetDialog(this)
+        val view = layoutInflater.inflate(R.layout.bottom_sheet_payment, null)
+        bottomSheetDialog!!.setContentView(view)
+
+        // Initialize Views inside BottomSheet
+        val btnCard = view.findViewById<Button>(R.id.btnCard)
+        val btnBank = view.findViewById<Button>(R.id.btnBank)
+        val btnGpay = view.findViewById<Button>(R.id.btnGpay)
+        val btnGcash = view.findViewById<Button>(R.id.btnGcash)
+        val priceTextView = view.findViewById<TextView>(R.id.priceinpayment)
+        val btnMakePayment = view.findViewById<Button>(R.id.btnMakePayment)
+
+        val sharedPreferences = getSharedPreferences("UserData", MODE_PRIVATE)
+        val userId = sharedPreferences.getInt("user_id", -1)
         val selectedShowtime = allShowtimes.find { it.show_day == selectedDay && it.show_time == selectedTime }
         val showtimeId = selectedShowtime?.showtime_id ?: -1
         val selectedSeatIds = selectedSeats.map { it.seat_id }
 
-        Log.d("SeatActivity", "Proceeding to payment with details:")
-        Log.d("SeatActivity", "Movie ID: $movieId")
-        Log.d("SeatActivity", "Showtime ID: $showtimeId")
-        Log.d("SeatActivity", "Selected Seats: $selectedSeatIds")
-        Log.d("SeatActivity", "Movie Price: ₱$moviePrice")
+        val totalPrice = selectedSeats.size * moviePrice
+        priceTextView.text = "₱ $totalPrice"
 
-        if (showtimeId == -1 || selectedSeats.isEmpty()) {
-            showToast("Please select a valid showtime and at least one seat.")
-            return
+        val paymentButtons = listOf(btnCard, btnBank, btnGpay, btnGcash)
+
+        fun getDrawableFromStart(button: Button): Int {
+            return when (button.id) {
+                R.id.btnCard -> R.drawable.credit_card
+                R.id.btnBank -> R.drawable.online_bank
+                R.id.btnGpay -> R.drawable.g_pay
+                R.id.btnGcash -> R.drawable.gcash
+                else -> 0
+            }
         }
 
-        // Proceed to the next step (e.g., navigate to the payment screen)
+        fun selectPaymentButton(selectedButton: Button) {
+            selectedPaymentMethod = selectedButton
+            for (button in paymentButtons) {
+                button.setCompoundDrawablesWithIntrinsicBounds(getDrawableFromStart(button), 0, R.drawable.unchecked_radio, 0)
+            }
+            selectedButton.setCompoundDrawablesWithIntrinsicBounds(getDrawableFromStart(selectedButton), 0, R.drawable.checked_radio, 0)
+        }
+
+        // Restore previously selected payment method
+        selectedPaymentMethod?.let { previouslySelected ->
+            selectPaymentButton(
+                paymentButtons.firstOrNull { it.id == previouslySelected.id } ?: return@let
+            )
+        }
+
+        btnCard.setOnClickListener { selectPaymentButton(btnCard) }
+        btnBank.setOnClickListener { selectPaymentButton(btnBank) }
+        btnGpay.setOnClickListener { selectPaymentButton(btnGpay) }
+        btnGcash.setOnClickListener { selectPaymentButton(btnGcash) }
+
+        btnMakePayment.setOnClickListener {
+            if (userId == -1 || showtimeId == -1 || selectedSeats.isEmpty()) {
+                Toast.makeText(this, "Invalid transaction details.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (selectedPaymentMethod == null) {
+                Toast.makeText(this, "Please choose a payment method.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            Log.d("Payment", "User ID: $userId")
+            Log.d("Payment", "Movie ID: $movieId")
+            Log.d("Payment", "Showtime ID: $showtimeId")
+            Log.d("Payment", "Selected Seats: $selectedSeatIds")
+            Log.d("Payment", "Movie Price: ₱$moviePrice")
+            Log.d("Payment", "Total Price: ₱$totalPrice")
+            Log.d("Payment", "Selected Payment Method: ${selectedPaymentMethod?.text}")
+
+            Toast.makeText(this, "Proceeding to Payment", Toast.LENGTH_SHORT).show()
+            bottomSheetDialog?.dismiss()
+            bottomSheetDialog = null // Reset dialog instance after dismissing
+        }
+
+        bottomSheetDialog?.setOnDismissListener {
+            bottomSheetDialog = null // Ensure the reference is cleared when the dialog is dismissed
+        }
+
+        bottomSheetDialog?.show()
     }
 
     private fun showPlaceholderTimes() {

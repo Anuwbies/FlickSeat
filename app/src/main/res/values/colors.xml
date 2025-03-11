@@ -10,4 +10,7 @@
     <color name="greytext">#AFAFAF</color>
     <color name="red">#FF0000</color>
     <color name="green">#00FF00</color>
+
+    <color name="mainGrey">#212121</color>
+    <color name="lighGrey">#424242</color>
 </resources>

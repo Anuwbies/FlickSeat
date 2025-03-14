@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 11, 2025 at 02:04 PM
+-- Generation Time: Mar 14, 2025 at 08:57 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -74,8 +74,8 @@ CREATE TABLE `seats` (
 
 INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (1, 1, 'A1', 'taken'),
-(2, 1, 'A2', 'available'),
-(3, 1, 'A3', 'available'),
+(2, 1, 'A2', 'taken'),
+(3, 1, 'A3', 'taken'),
 (4, 1, 'A4', 'available'),
 (5, 1, 'A5', 'available'),
 (6, 1, 'A6', 'available'),
@@ -3983,7 +3983,7 @@ CREATE TABLE `tickets` (
   `showtime_id` int(11) NOT NULL,
   `seat_id` int(11) NOT NULL,
   `purchase_date` datetime DEFAULT current_timestamp(),
-  `ticket_price` decimal(10,2) NOT NULL,
+  `ticket_price` int(11) NOT NULL,
   `status` enum('pending','booked','cancelled','used') DEFAULT 'pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -3992,26 +3992,25 @@ CREATE TABLE `tickets` (
 --
 
 INSERT INTO `tickets` (`ticket_id`, `user_id`, `movie_id`, `showtime_id`, `seat_id`, `purchase_date`, `ticket_price`, `status`) VALUES
-(1, 3, 1, 1, 1, '2025-03-07 01:10:28', 12.99, 'booked'),
-(2, 2, 1, 1, 2, '2025-03-07 01:10:28', 12.99, 'pending');
-
---
--- Triggers `tickets`
---
-DELIMITER $$
-CREATE TRIGGER `before_insert_ticket` BEFORE INSERT ON `tickets` FOR EACH ROW BEGIN
-    DECLARE movie_price INT;
-    
-    -- Get the price of the movie from the movie table
-    SELECT price INTO movie_price 
-    FROM movie 
-    WHERE movie_id = NEW.movie_id;
-    
-    -- Assign the price to the ticket
-    SET NEW.ticket_price = movie_price;
-END
-$$
-DELIMITER ;
+(34, 3, 1, 1, 2, '2025-03-14 08:07:33', 400, 'pending'),
+(35, 3, 1, 1, 2, '2025-03-14 08:35:37', 400, 'pending'),
+(36, 3, 1, 1, 2, '2025-03-14 08:36:12', 400, 'pending'),
+(37, 3, 1, 1, 3, '2025-03-14 08:36:50', 400, 'pending'),
+(38, 3, 1, 1, 2, '2025-03-14 08:36:50', 400, 'pending'),
+(39, 3, 1, 1, 2, '2025-03-14 08:39:05', 400, 'pending'),
+(40, 3, 1, 1, 29, '2025-03-14 08:41:55', 400, 'pending'),
+(41, 3, 1, 1, 27, '2025-03-14 08:41:55', 400, 'pending'),
+(42, 3, 1, 1, 26, '2025-03-14 08:41:55', 400, 'pending'),
+(43, 3, 1, 1, 28, '2025-03-14 08:41:55', 400, 'pending'),
+(44, 3, 1, 1, 30, '2025-03-14 08:41:55', 400, 'pending'),
+(45, 3, 2, 58, 1712, '2025-03-14 08:45:22', 250, 'pending'),
+(46, 3, 2, 58, 1713, '2025-03-14 08:45:22', 250, 'pending'),
+(47, 3, 2, 6, 151, '2025-03-14 08:45:45', 250, 'pending'),
+(48, 3, 2, 6, 151, '2025-03-14 08:46:11', 250, 'pending'),
+(49, 3, 4, 16, 452, '2025-03-14 08:51:23', 300, 'pending'),
+(50, 3, 4, 16, 451, '2025-03-14 08:51:23', 300, 'pending'),
+(51, 3, 1, 1, 3, '2025-03-14 08:54:04', 400, 'pending'),
+(52, 3, 1, 1, 3, '2025-03-14 08:55:19', 400, 'pending');
 
 -- --------------------------------------------------------
 
@@ -4044,7 +4043,13 @@ INSERT INTO `users` (`user_id`, `email`, `username`, `password`) VALUES
 (11, 'wer@ha.com', 'wer', '$2y$10$TbSx402ElCy9xGXwWjQu3Oc9EJFRz1hHR06N2LxAKPpBfvXsl3b0W'),
 (16, 'dfg@gmail.com', 'dfg', '$2y$10$NI.tCLN3GdLd84a4sXL2qOukjVrGqyDMcJAcMSp91BU7mQQEUBzXi'),
 (17, 'vbn@gmail.com', 'vbn', '$2y$10$yyNDIzcIsa4jt1ThGMSvyeDFbeR9Xtv7E8TQIewq2iYYHg14tjGHG'),
-(18, 'ashi@gmail.com', 'ashi', '$2y$10$Azah3IbTV8Tc2u/84WxEf.7eKAN/nuC222czkNx/79wtSye2TmVzC');
+(18, 'ashi@gmail.com', 'ashi', '$2y$10$Azah3IbTV8Tc2u/84WxEf.7eKAN/nuC222czkNx/79wtSye2TmVzC'),
+(94, 'yui@gmail.com', 'yui', '$2y$10$u84tlCuehcVQRd.i..PoCunZGq96sPaJjIPRXpYBISDl5Z.6tT42m'),
+(95, 'ap@gmail.com', 'ap-ap', '$2y$10$dAFgsLyn0uEarJIQMBJam.cvVsy4dChqkyHkXIPyKyeuOv27.vgni'),
+(96, 'rodas@gmail.com', 'rodas', '$2y$10$9gVomIyYrmvP/GexlNXrT.IeTy0KSC09BQrMfJHXi1c4ncm7x3BaG'),
+(97, 'flick@gmail.com', 'flick', '$2y$10$ehzonp72YZ9cmS.Lp7QmuOVXUMCp/MDyta.IZmGpyPbRYGsZ4qWp2'),
+(98, 'ewq@gmail.com', 'ewq', '$2y$10$K8rKkgQf2DrA8QuvIaM0/.BTm4gxhhA29Oas5S8Q0skSys6YqT9NS'),
+(100, 'tre@gmail.com', 'tre', '$2y$10$oYpTvzryBuSpB6IaWBw63OR.ln67ZmZsMapqAhY0atPrNJHgyjILq');
 
 --
 -- Indexes for dumped tables
@@ -4087,7 +4092,8 @@ ALTER TABLE `tickets`
 ALTER TABLE `users`
   ADD PRIMARY KEY (`user_id`),
   ADD UNIQUE KEY `email` (`email`),
-  ADD UNIQUE KEY `username` (`username`);
+  ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `user_id` (`user_id`,`email`,`username`,`password`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -4115,13 +4121,13 @@ ALTER TABLE `showtimes`
 -- AUTO_INCREMENT for table `tickets`
 --
 ALTER TABLE `tickets`
-  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=94;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
 
 --
 -- Constraints for dumped tables

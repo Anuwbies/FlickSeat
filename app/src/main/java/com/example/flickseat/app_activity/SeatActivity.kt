@@ -1,6 +1,7 @@
 package com.example.flickseat.app_activity
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -12,6 +13,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.flickseat.PaidActivity
 import com.example.flickseat.R
 import com.example.flickseat.adapter.SeatAdapter
 import com.example.flickseat.adapters.DayAdapter
@@ -267,6 +269,54 @@ class SeatActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            var bookedSeatsCount = 0
+            val totalSeats = selectedSeats.size
+
+            for (seat in selectedSeats) {
+                if (seat.seat_id == -1) {
+                    Log.e("TicketBooking", "Skipping invalid seat: ${seat.seat_name}")
+                    continue // Skip invalid seats
+                }
+
+                Log.d("TicketBooking", "Booking seat: ID=${seat.seat_id}, Name=${seat.seat_name}")
+
+                RetrofitClient.instance.insertTicket(
+                    userId = userId,
+                    movieId = movieId,
+                    showtimeId = showtimeId,
+                    seatId = seat.seat_id,
+                    ticketPrice = moviePrice
+                ).enqueue(object : Callback<TicketResponse> {
+                    override fun onResponse(call: Call<TicketResponse>, response: Response<TicketResponse>) {
+                        if (response.isSuccessful) {
+                            val ticketResponse = response.body()
+                            if (ticketResponse?.status == "success") {
+                                bookSeat(seat.seat_id)
+                                Log.d("TicketBooking", "Successfully booked seat: ${seat.seat_id}")
+                                bookedSeatsCount++
+                            } else {
+                                Log.e("TicketBooking", "Server error: ${ticketResponse?.message}")
+                                Toast.makeText(this@SeatActivity, "Failed to book seat ${seat.seat_name}: ${ticketResponse?.message}", Toast.LENGTH_SHORT).show()
+                            }
+                        } else {
+                            val errorResponse = response.errorBody()?.string()
+                            Log.e("TicketBooking", "Failed to book seat ${seat.seat_id}. Response: $errorResponse")
+                            Toast.makeText(this@SeatActivity, "Failed to book seat ${seat.seat_name}. Server error.", Toast.LENGTH_SHORT).show()
+                        }
+
+                        // Show success message only once after all seats are processed
+                        if (bookedSeatsCount == totalSeats) {
+                            Toast.makeText(this@SeatActivity, "Seat/s booked successfully", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<TicketResponse>, t: Throwable) {
+                        Log.e("TicketBooking", "Network error: ${t.message}")
+                        Toast.makeText(this@SeatActivity, "Failed to book seat ${seat.seat_name}. Network error.", Toast.LENGTH_SHORT).show()
+                    }
+                })
+            }
+
             Log.d("Payment", "User ID: $userId")
             Log.d("Payment", "Movie ID: $movieId")
             Log.d("Payment", "Showtime ID: $showtimeId")
@@ -275,10 +325,23 @@ class SeatActivity : AppCompatActivity() {
             Log.d("Payment", "Total Price: ₱$totalPrice")
             Log.d("Payment", "Selected Payment Method: ${selectedPaymentMethod?.text}")
 
-            Toast.makeText(this, "Proceeding to Payment", Toast.LENGTH_SHORT).show()
+            // Dismiss bottom sheet after attempting to book tickets
             bottomSheetDialog?.dismiss()
-            bottomSheetDialog = null // Reset dialog instance after dismissing
+
+            // Navigate to PaidActivity
+            val intent = Intent(this@SeatActivity, PaidActivity::class.java).apply {
+                putExtra("user_id", userId)
+                putExtra("movie_id", movieId)
+                putExtra("showtime_id", showtimeId)
+                putExtra("selected_seats", selectedSeatIds.joinToString(",")) // Pass seat IDs as comma-separated string
+                putExtra("total_price", totalPrice)
+                putExtra("payment_method", selectedPaymentMethod?.text.toString())
+            }
+            startActivity(intent)
+            finish() // Finish the current activity to prevent returning back
         }
+
+
 
         bottomSheetDialog?.setOnDismissListener {
             bottomSheetDialog = null // Ensure the reference is cleared when the dialog is dismissed
@@ -286,6 +349,30 @@ class SeatActivity : AppCompatActivity() {
 
         bottomSheetDialog?.show()
     }
+
+    private fun bookSeat(seatId: Int) {
+        RetrofitClient.instance.bookSeat(seatId).enqueue(object : Callback<BookSeatResponse> {
+            override fun onResponse(call: Call<BookSeatResponse>, response: Response<BookSeatResponse>) {
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    Log.d("SeatBooking", "Response: $body")
+
+                    if (body?.status == "success") {
+                        Log.d("SeatBooking", "Seat $seatId marked as taken.")
+                    } else {
+                        Log.e("SeatBooking", "Failed to update seat $seatId status: ${body?.message}")
+                    }
+                } else {
+                    Log.e("SeatBooking", "Unexpected response for seat $seatId: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<BookSeatResponse>, t: Throwable) {
+                Log.e("SeatBooking", "Network error while updating seat $seatId status: ${t.message}")
+            }
+        })
+    }
+
 
     private fun showPlaceholderTimes() {
         val placeholderTimes = listOf("10:00am", "12:00pm", "4:00pm", "8:00pm", "12:00am")

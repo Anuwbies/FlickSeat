@@ -58,8 +58,18 @@ interface ApiService {
     ): Call<SeatResponse>
 
     @FormUrlEncoded
+    @POST("insert_ticket.php")
+    fun insertTicket(
+        @Field("user_id") userId: Int,
+        @Field("movie_id") movieId: Int,
+        @Field("showtime_id") showtimeId: Int,
+        @Field("seat_id") seatId: Int,
+        @Field("ticket_price") ticketPrice: Int
+    ): Call<TicketResponse>
+
+    @FormUrlEncoded
     @POST("book_seat.php")
     fun bookSeat(
         @Field("seat_id") seatId: Int
-    ): Call<UserResponse>
+    ): Call<BookSeatResponse>
 }

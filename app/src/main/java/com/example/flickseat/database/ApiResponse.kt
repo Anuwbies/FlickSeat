@@ -52,3 +52,13 @@ data class SeatResponse(
     val status: String,
     val seats: List<Seat>?
 )
+
+data class TicketResponse(
+    val status: String,
+    val message: String
+)
+
+data class BookSeatResponse(
+    val status: String,
+    val message: String
+)

@@ -341,8 +341,6 @@ class SeatActivity : AppCompatActivity() {
             finish() // Finish the current activity to prevent returning back
         }
 
-
-
         bottomSheetDialog?.setOnDismissListener {
             bottomSheetDialog = null // Ensure the reference is cleared when the dialog is dismissed
         }
@@ -372,7 +370,6 @@ class SeatActivity : AppCompatActivity() {
             }
         })
     }
-
 
     private fun showPlaceholderTimes() {
         val placeholderTimes = listOf("10:00am", "12:00pm", "4:00pm", "8:00pm", "12:00am")

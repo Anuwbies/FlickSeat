@@ -62,3 +62,19 @@ data class BookSeatResponse(
     val status: String,
     val message: String
 )
+
+data class Ticket(
+    val ticket_id: Int,
+    val purchase_date: String,
+    val ticket_price: Int,
+    val status: String,
+    val movie_title: String,
+    val show_day: String,
+    val show_time: String,
+    val seat_name: String
+)
+
+data class UserTicketResponse(
+    val status: String,
+    val tickets: List<Ticket>?
+)

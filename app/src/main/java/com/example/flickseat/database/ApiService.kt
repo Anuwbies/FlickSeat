@@ -72,4 +72,9 @@ interface ApiService {
     fun bookSeat(
         @Field("seat_id") seatId: Int
     ): Call<BookSeatResponse>
+
+    @GET("get_tickets.php")
+    fun getUserTickets(
+        @Query("user_id") userId: Int
+    ): Call<UserTicketResponse>
 }

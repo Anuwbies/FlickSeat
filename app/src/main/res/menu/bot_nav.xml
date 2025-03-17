@@ -9,6 +9,10 @@
             android:icon="@drawable/ticket"
             android:title="My Ticket" />
         <item
+            android:id="@+id/tab_fooddrink"
+            android:icon="@drawable/food_drink"
+            android:title="Addons" />
+        <item
             android:id="@+id/tab_account"
             android:icon="@drawable/person"
             android:title="Account" />

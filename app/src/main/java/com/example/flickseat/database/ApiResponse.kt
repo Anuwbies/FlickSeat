@@ -78,3 +78,17 @@ data class UserTicketResponse(
     val status: String,
     val tickets: List<Ticket>?
 )
+
+data class FoodDrink(
+    val id: Int,
+    val name: String,
+    val price: Int
+)
+
+data class FoodDrinkResponse(
+    val status: String,
+    val foods: List<FoodDrink>?,
+    val drinks: List<FoodDrink>?,
+    val message: String? = null
+)
+

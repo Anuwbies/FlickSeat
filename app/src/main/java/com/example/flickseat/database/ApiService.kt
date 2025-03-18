@@ -77,4 +77,9 @@ interface ApiService {
     fun getUserTickets(
         @Query("user_id") userId: Int
     ): Call<UserTicketResponse>
+
+    @GET("get_foods_drinks.php")
+    fun getFoodsDrinks(
+    ): Call<FoodDrinkResponse>
+
 }

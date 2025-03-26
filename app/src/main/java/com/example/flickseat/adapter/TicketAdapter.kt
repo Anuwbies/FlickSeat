@@ -22,7 +22,6 @@ class TicketAdapter(private val ticketList: List<Ticket>) :
         val ticket = ticketList[position]
         holder.bind(ticket)
 
-        // Set bottom margin for last item
         val layoutParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
         layoutParams.bottomMargin = if (position == ticketList.size - 1) 400 else 30
         holder.itemView.layoutParams = layoutParams

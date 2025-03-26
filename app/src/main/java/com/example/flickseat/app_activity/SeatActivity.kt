@@ -50,14 +50,12 @@ class SeatActivity : AppCompatActivity() {
             finish()
         }
 
-        // Get movie ID from intent
         movieId = intent.getIntExtra("movie_id", 0)
 
         movieTitleTextView = findViewById(R.id.tvMovieTitle)
         priceTextView = findViewById(R.id.price)
         btnPrcdtoPayment = findViewById(R.id.btnPrcdtoPayment)
 
-        // Initialize RecyclerViews
         dayRecyclerView = findViewById(R.id.dayRV)
         timeRecyclerView = findViewById(R.id.timeRV)
         seatRecyclerView = findViewById(R.id.seatRV)
@@ -71,7 +69,6 @@ class SeatActivity : AppCompatActivity() {
         showPlaceholderSeats()
         fetchShowtimes()
 
-        // Button click listener to log details
         btnPrcdtoPayment.setOnClickListener {
             if (selectedSeats.isEmpty()) {
                 Toast.makeText(this, "Please select a seat to proceed.", Toast.LENGTH_SHORT).show()
@@ -136,8 +133,8 @@ class SeatActivity : AppCompatActivity() {
         dayRecyclerView.adapter = DayAdapter(days) { day ->
             if (selectedDay != day) {
                 selectedDay = day
-                selectedSeats = emptyList() // Reset selected seats
-                priceTextView.text = "₱ 0" // Reset displayed price
+                selectedSeats = emptyList()
+                priceTextView.text = "₱ 0"
 
                 timeRecyclerView.visibility = View.VISIBLE
                 val timesForDay = allShowtimes.filter { it.show_day == day }.map { it.show_time }
@@ -158,8 +155,8 @@ class SeatActivity : AppCompatActivity() {
         timeRecyclerView.adapter = TimeAdapter(times, isPlaceholder) { time ->
             if (!isPlaceholder && selectedTime != time) {
                 selectedTime = time
-                selectedSeats = emptyList() // Reset selected seats
-                priceTextView.text = "₱ 0" // Reset displayed price
+                selectedSeats = emptyList()
+                priceTextView.text = "₱ 0"
                 fetchSeats()
             }
         }
@@ -197,19 +194,18 @@ class SeatActivity : AppCompatActivity() {
     }
 
     private var bottomSheetDialog: BottomSheetDialog? = null
-    private var selectedPaymentMethod: Button? = null // Track selected payment method
+    private var selectedPaymentMethod: Button? = null
 
     @SuppressLint("SetTextI18n")
     private fun showPaymentBottomSheet() {
         if (bottomSheetDialog != null && bottomSheetDialog!!.isShowing) {
-            return // Prevent multiple dialogs from opening
+            return
         }
 
         bottomSheetDialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.bottom_sheet_payment, null)
         bottomSheetDialog!!.setContentView(view)
 
-        // Initialize Views inside BottomSheet
         val btnCard = view.findViewById<Button>(R.id.btnCard)
         val btnBank = view.findViewById<Button>(R.id.btnBank)
         val btnGpay = view.findViewById<Button>(R.id.btnGpay)
@@ -246,7 +242,6 @@ class SeatActivity : AppCompatActivity() {
             selectedButton.setCompoundDrawablesWithIntrinsicBounds(getDrawableFromStart(selectedButton), 0, R.drawable.checked_radio, 0)
         }
 
-        // Restore previously selected payment method
         selectedPaymentMethod?.let { previouslySelected ->
             selectPaymentButton(
                 paymentButtons.firstOrNull { it.id == previouslySelected.id } ?: return@let
@@ -275,7 +270,7 @@ class SeatActivity : AppCompatActivity() {
             for (seat in selectedSeats) {
                 if (seat.seat_id == -1) {
                     Log.e("TicketBooking", "Skipping invalid seat: ${seat.seat_name}")
-                    continue // Skip invalid seats
+                    continue
                 }
 
                 Log.d("TicketBooking", "Booking seat: ID=${seat.seat_id}, Name=${seat.seat_name}")
@@ -304,7 +299,6 @@ class SeatActivity : AppCompatActivity() {
                             Toast.makeText(this@SeatActivity, "Failed to book seat ${seat.seat_name}. Server error.", Toast.LENGTH_SHORT).show()
                         }
 
-                        // Show success message only once after all seats are processed
                         if (bookedSeatsCount == totalSeats) {
                             Toast.makeText(this@SeatActivity, "Seat/s booked successfully", Toast.LENGTH_SHORT).show()
                         }
@@ -325,24 +319,22 @@ class SeatActivity : AppCompatActivity() {
             Log.d("Payment", "Total Price: ₱$totalPrice")
             Log.d("Payment", "Selected Payment Method: ${selectedPaymentMethod?.text}")
 
-            // Dismiss bottom sheet after attempting to book tickets
             bottomSheetDialog?.dismiss()
 
-            // Navigate to PaidActivity
             val intent = Intent(this@SeatActivity, PaidActivity::class.java).apply {
                 putExtra("user_id", userId)
                 putExtra("movie_id", movieId)
                 putExtra("showtime_id", showtimeId)
-                putExtra("selected_seats", selectedSeatIds.joinToString(",")) // Pass seat IDs as comma-separated string
+                putExtra("selected_seats", selectedSeatIds.joinToString(","))
                 putExtra("total_price", totalPrice)
                 putExtra("payment_method", selectedPaymentMethod?.text.toString())
             }
             startActivity(intent)
-            finish() // Finish the current activity to prevent returning back
+            finish()
         }
 
         bottomSheetDialog?.setOnDismissListener {
-            bottomSheetDialog = null // Ensure the reference is cleared when the dialog is dismissed
+            bottomSheetDialog = null
         }
 
         bottomSheetDialog?.show()

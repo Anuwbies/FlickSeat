@@ -82,4 +82,17 @@ interface ApiService {
     fun getFoodsDrinks(
     ): Call<FoodDrinkResponse>
 
+    @FormUrlEncoded
+    @POST("insert_orders.php")
+    fun insertOrder(
+        @Field("user_id") userId: Int,
+        @Field("food_id") foodId: String?,  // Changed to String?
+        @Field("drink_id") drinkId: String?, // Changed to String?
+        @Field("quantity") quantity: Int
+    ): Call<OrderResponse>
+
+    @GET("get_orders.php")
+    fun getOrders(
+        @Query("user_id") userId: Int
+    ): Call<OrderedResponse>
 }

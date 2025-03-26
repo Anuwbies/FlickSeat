@@ -58,7 +58,6 @@ class Signin : AppCompatActivity() {
             etPassword.setSelection(etPassword.text?.length ?: 0)
         }
 
-        // ✅ Pressing "Enter" triggers sign-in
         etPassword.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE ||
                 event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN) {
@@ -91,7 +90,6 @@ class Signin : AppCompatActivity() {
 
                     Toast.makeText(this@Signin, "Login successful", Toast.LENGTH_LONG).show()
 
-                    // ✅ Clear previous activities and start Botnav
                     val intent = Intent(this@Signin, Botnav::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)

@@ -35,13 +35,12 @@ class myticket : Fragment() {
 
         recyclerView = view.findViewById(R.id.ticketsRV)
         tvNoTicketFound = view.findViewById(R.id.tvNoticketfound)
-        val btnFilter: View = view.findViewById(R.id.btnFilter) // Find the sort button
+        val btnFilter: View = view.findViewById(R.id.btnFilter)
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         ticketAdapter = TicketAdapter(ticketList)
         recyclerView.adapter = ticketAdapter
 
-        // Show PopupMenu when clicking the sort button
         btnFilter.setOnClickListener { showSortMenu(it) }
 
         fetchUserTickets()
@@ -57,7 +56,7 @@ class myticket : Fragment() {
             return
         }
 
-        Log.d("MyTicketFragment", "Fetching tickets for user_id: $userId") // Debug log
+        Log.d("MyTicketFragment", "Fetching tickets for user_id: $userId")
 
         RetrofitClient.instance.getUserTickets(userId).enqueue(object : Callback<UserTicketResponse> {
             @SuppressLint("NotifyDataSetChanged")
@@ -83,13 +82,11 @@ class myticket : Fragment() {
                 Log.e("MyTicketFragment", "API call failed", t)
                 Toast.makeText(requireContext(), "Failed to load tickets: ${t.message}", Toast.LENGTH_SHORT).show()
 
-                // Show "No tickets found" if the API call fails
                 tvNoTicketFound.visibility = View.VISIBLE
             }
         })
     }
 
-    // Function to show PopupMenu for sorting
     private fun showSortMenu(view: View) {
         val popupMenu = android.widget.PopupMenu(requireContext(), view)
         popupMenu.menuInflater.inflate(R.menu.filter_menu, popupMenu.menu)
@@ -106,14 +103,12 @@ class myticket : Fragment() {
         popupMenu.show()
     }
 
-    // Function to sort tickets
     @SuppressLint("NotifyDataSetChanged")
     private fun sortTickets(sortType: String) {
         when (sortType) {
-            "Movie" -> ticketList.sortBy { it.movie_title } // Sort by movie name (A-Z)
+            "Movie" -> ticketList.sortBy { it.movie_title }
 
             "Day" -> {
-                // Define custom order for days of the week
                 val dayOrder = mapOf(
                     "Mon" to 1,
                     "Tue" to 2,
@@ -122,12 +117,10 @@ class myticket : Fragment() {
                     "Fri" to 5
                 )
 
-                // Sort tickets based on the custom day order
                 ticketList.sortBy { dayOrder[it.show_day] ?: Int.MAX_VALUE }
             }
 
             "Time" -> {
-                // Define custom order for show times
                 val timeOrder = mapOf(
                     "10:00am" to 1,
                     "12:00pm" to 2,
@@ -136,13 +129,12 @@ class myticket : Fragment() {
                     "12:00am" to 5
                 )
 
-                // Sort tickets based on the custom time order
                 ticketList.sortBy { timeOrder[it.show_time] ?: Int.MAX_VALUE }
             }
 
-            "Status" -> ticketList.sortBy { it.status } // Sort by status alphabetically
+            "Status" -> ticketList.sortBy { it.status }
         }
 
-        ticketAdapter.notifyDataSetChanged() // Refresh RecyclerView after sorting
+        ticketAdapter.notifyDataSetChanged()
     }
 }

@@ -24,31 +24,42 @@ class TrailerAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrailerViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_trailer, parent, false)
+        return TrailerViewHolder(view)
+    }
 
-        val itemWidthPx = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, 150f, context.resources.displayMetrics
-        ).toInt()
+    override fun onBindViewHolder(holder: TrailerViewHolder, position: Int) {
         val sideMarginPx = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, 5f, context.resources.displayMetrics
+        ).toInt()
+        val startMarginPx = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP, 10f, context.resources.displayMetrics
+        ).toInt()
+        val endMarginPx = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP, 10f, context.resources.displayMetrics
         ).toInt()
         val bottomMarginPx = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, 90f, context.resources.displayMetrics
         ).toInt()
 
-        val layoutParams = view.layoutParams
-        layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
-        layoutParams.width = itemWidthPx
-        if (layoutParams is ViewGroup.MarginLayoutParams) {
-            layoutParams.leftMargin = sideMarginPx
-            layoutParams.rightMargin = sideMarginPx
-            layoutParams.bottomMargin = bottomMarginPx
+        val layoutParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
+
+        when (position) {
+            0 -> {
+                layoutParams.leftMargin = startMarginPx
+                layoutParams.rightMargin = sideMarginPx
+            }
+            itemCount - 1 -> {
+                layoutParams.leftMargin = sideMarginPx
+                layoutParams.rightMargin = endMarginPx
+            }
+            else -> {
+                layoutParams.leftMargin = sideMarginPx
+                layoutParams.rightMargin = sideMarginPx
+            }
         }
-        view.layoutParams = layoutParams
+        layoutParams.bottomMargin = bottomMarginPx
+        holder.itemView.layoutParams = layoutParams
 
-        return TrailerViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: TrailerViewHolder, position: Int) {
         holder.bind(trailers[position])
     }
 

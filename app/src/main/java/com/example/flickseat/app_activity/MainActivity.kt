@@ -17,9 +17,8 @@ class MainActivity : AppCompatActivity() {
         val isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false)
 
         if (isLoggedIn) {
-            // ✅ User is logged in, go to Botnav
             startActivity(Intent(this, Botnav::class.java))
-            finish() // ✅ Close MainActivity
+            finish()
         }
 
         val signInBtn = findViewById<Button>(R.id.SignIn_button)

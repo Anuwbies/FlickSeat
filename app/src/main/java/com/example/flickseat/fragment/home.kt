@@ -116,17 +116,15 @@ class home : Fragment() {
             featuredImageView.setImageResource(R.drawable.shonic)
         }
 
-        // Navigate to Details activity when clicking the featured image
         featuredImageView.setOnClickListener {
             val intent = Intent(context, Details::class.java)
             intent.putExtra("tmdb_id", movie.tmdb_id)
             context.startActivity(intent)
         }
 
-        // Navigate to SeatActivity when clicking the book button
         bookSeatButton.setOnClickListener {
             val intent = Intent(context, SeatActivity::class.java)
-            intent.putExtra("movie_id", movie.movie_id) // Pass the movie_id
+            intent.putExtra("movie_id", movie.movie_id)
             context.startActivity(intent)
         }
     }

@@ -12,7 +12,7 @@ import nl.joery.animatedbottombar.AnimatedBottomBar
 
 class Botnav : AppCompatActivity() {
     private lateinit var bottomBar: AnimatedBottomBar
-    private var lastIndex = 0 // Track last selected tab index
+    private var lastIndex = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,7 +21,7 @@ class Botnav : AppCompatActivity() {
         bottomBar = findViewById(R.id.bottom_bar)
 
         if (savedInstanceState == null) {
-            replaceFragment(home(), false) // No animation on first launch
+            replaceFragment(home(), false)
         }
 
         bottomBar.setOnTabSelectListener(object : AnimatedBottomBar.OnTabSelectListener {
@@ -38,7 +38,7 @@ class Botnav : AppCompatActivity() {
                     else -> home()
                 }
                 replaceFragment(selectedFragment, newIndex > this@Botnav.lastIndex)
-                this@Botnav.lastIndex = newIndex // Update last index
+                this@Botnav.lastIndex = newIndex
             }
 
             override fun onTabReselected(index: Int, tab: AnimatedBottomBar.Tab) {}

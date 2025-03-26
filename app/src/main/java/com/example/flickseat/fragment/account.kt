@@ -39,7 +39,6 @@ class account : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_account, container, false)
 
-        // Initialize Views
         tvUsername = view.findViewById(R.id.tvUsername)
         tvEmail = view.findViewById(R.id.tvEmail)
         profileText = view.findViewById(R.id.profile_text)
@@ -47,7 +46,6 @@ class account : Fragment() {
 
         setRandomBackgroundColor()
 
-        // Get user ID from SharedPreferences
         sharedPreferences = requireActivity().getSharedPreferences("UserData", Context.MODE_PRIVATE)
         val userId = sharedPreferences.getInt("user_id", -1)
 
@@ -76,10 +74,8 @@ class account : Fragment() {
                         tvUsername.text = user.username
                         tvEmail.text = user.email
 
-                        // Display first two letters of username in profilePic TextView
                         profileText.text = user.username.take(2).uppercase()
 
-                        // Set text color and background color
                         profileText.setTextColor(Color.WHITE)
                         setRandomBackgroundColor()
                     }
@@ -98,40 +94,33 @@ class account : Fragment() {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_box, null)
         val dialog = AlertDialog.Builder(requireContext()).setView(dialogView).create()
 
-        // Show dialog first to get Window attributes
         dialog.show()
 
-        // Force dialog width to match the screen width
         dialog.window?.setLayout(
-            (resources.displayMetrics.widthPixels * 0.85).toInt(),  // 85% of screen width
+            (resources.displayMetrics.widthPixels * 0.85).toInt(),
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
 
-        // Make background transparent for rounded corners effect
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        // Initialize buttons from dialog_box.xml
         val btnCancel = dialogView.findViewById<Button>(R.id.btnCancel)
         val btnLogout = dialogView.findViewById<Button>(R.id.btnLogout)
 
         btnCancel.setOnClickListener {
-            dialog.dismiss() // Close the dialog
+            dialog.dismiss()
         }
 
         btnLogout.setOnClickListener {
-            dialog.dismiss() // Close the dialog
-            performLogout()  // Call logout function
+            dialog.dismiss()
+            performLogout()
         }
     }
 
     private fun performLogout() {
-        // Clear user data from SharedPreferences
         sharedPreferences.edit().clear().apply()
 
-        // Show a toast message for successful logout
         Toast.makeText(requireContext(), "Logout successful!", Toast.LENGTH_SHORT).show()
 
-        // Navigate to MainActivity
         val intent = Intent(requireActivity(), MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
@@ -139,7 +128,6 @@ class account : Fragment() {
     }
 
     private fun setRandomBackgroundColor() {
-        // Generate moderately light colors (values between 100 and 220)
         val red = Random.nextInt(100, 220)
         val green = Random.nextInt(100, 220)
         val blue = Random.nextInt(100, 220)

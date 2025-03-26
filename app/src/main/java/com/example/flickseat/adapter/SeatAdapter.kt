@@ -1,7 +1,6 @@
 package com.example.flickseat.adapter
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
@@ -37,7 +36,6 @@ class SeatAdapter(
         val seat = seats[position]
         val context = holder.itemView.context
 
-        // Caching colors for optimization
         val greyColor = ContextCompat.getColor(context, R.color.greytext)
         val redColor = ContextCompat.getColor(context, R.color.red)
         val purpleColor = ContextCompat.getColor(context, R.color.purple)
@@ -47,7 +45,6 @@ class SeatAdapter(
 
         holder.tvSeat.text = seat.seat_name
 
-        // Apply uniform spacing
         val layoutParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
         layoutParams.setMargins(13, 13, 13, 13)
         holder.itemView.layoutParams = layoutParams
@@ -67,17 +64,14 @@ class SeatAdapter(
 
             when {
                 selectedSeats.contains(seat) -> {
-                    // Selected seat
                     holder.container.imageTintList = ColorStateList.valueOf(purpleColor)
                     holder.tvSeat.setTextColor(whiteColor)
                 }
                 seat.status == "available" -> {
-                    // Available seat
                     holder.container.imageTintList = ColorStateList.valueOf(greyColor)
                     holder.tvSeat.setTextColor(blackColor)
                 }
                 else -> {
-                    // Booked seat
                     holder.container.imageTintList = ColorStateList.valueOf(redColor)
                     holder.tvSeat.setTextColor(whiteColor)
                 }
@@ -95,7 +89,7 @@ class SeatAdapter(
                             return@setOnClickListener
                         }
                     }
-                    notifyDataSetChanged() // Ensures smooth UI updates
+                    notifyDataSetChanged()
                     onSeatsSelected(selectedSeats.toList())
                 }
             }

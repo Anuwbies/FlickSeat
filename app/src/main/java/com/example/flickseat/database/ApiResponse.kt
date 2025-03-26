@@ -92,3 +92,24 @@ data class FoodDrinkResponse(
     val message: String? = null
 )
 
+data class OrderResponse(
+    val status: String,
+    val message: String
+)
+
+data class Order(
+    val order_id: Int,
+    val user_id: Int,
+    val food_id: Int?,
+    val food_name: String?,
+    val drink_id: Int?,
+    val drink_name: String?,
+    val quantity: Int,
+    val status: String
+)
+
+data class OrderedResponse(
+    val status: String,
+    val orders: List<Order>?,
+    val message: String? = null
+)

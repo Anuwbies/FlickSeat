@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 14, 2025 at 08:57 AM
+-- Generation Time: Mar 26, 2025 at 06:50 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,48 @@ SET time_zone = "+00:00";
 --
 -- Database: `flickseat_db`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `drinks`
+--
+
+CREATE TABLE `drinks` (
+  `drink_id` int(11) NOT NULL,
+  `drink_name` varchar(255) NOT NULL,
+  `drink_price` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `drinks`
+--
+
+INSERT INTO `drinks` (`drink_id`, `drink_name`, `drink_price`) VALUES
+(1, 'Water', 20),
+(2, 'Coca Cola', 25),
+(3, 'Iced Tea', 30);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `foods`
+--
+
+CREATE TABLE `foods` (
+  `food_id` int(11) NOT NULL,
+  `food_name` varchar(255) NOT NULL,
+  `food_price` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `foods`
+--
+
+INSERT INTO `foods` (`food_id`, `food_name`, `food_price`) VALUES
+(1, 'Buttered Popcorn', 70),
+(2, 'Nachos with Cheese', 100),
+(3, 'Hot Dog', 50);
 
 -- --------------------------------------------------------
 
@@ -58,6 +100,36 @@ INSERT INTO `movie` (`movie_id`, `title`, `genre`, `release_date`, `duration`, `
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `orders`
+--
+
+CREATE TABLE `orders` (
+  `order_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `food_id` int(11) DEFAULT NULL,
+  `drink_id` int(11) DEFAULT NULL,
+  `quantity` int(11) NOT NULL CHECK (`quantity` > 0),
+  `status` enum('available','claimed') DEFAULT 'available'
+) ;
+
+--
+-- Dumping data for table `orders`
+--
+
+INSERT INTO `orders` (`order_id`, `user_id`, `food_id`, `drink_id`, `quantity`, `status`) VALUES
+(62, 10, NULL, 2, 2, 'available'),
+(63, 10, 2, NULL, 1, 'available'),
+(64, 10, 1, NULL, 2, 'available'),
+(65, 10, NULL, 1, 1, 'available'),
+(66, 10, 3, NULL, 2, 'available'),
+(67, 10, NULL, 3, 1, 'available'),
+(68, 10, NULL, 3, 1, 'available'),
+(69, 10, 1, NULL, 1, 'available'),
+(70, 10, 3, NULL, 2, 'available');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `seats`
 --
 
@@ -76,8 +148,8 @@ INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (1, 1, 'A1', 'taken'),
 (2, 1, 'A2', 'taken'),
 (3, 1, 'A3', 'taken'),
-(4, 1, 'A4', 'available'),
-(5, 1, 'A5', 'available'),
+(4, 1, 'A4', 'taken'),
+(5, 1, 'A5', 'taken'),
 (6, 1, 'A6', 'available'),
 (7, 1, 'B1', 'available'),
 (8, 1, 'B2', 'available'),
@@ -158,11 +230,11 @@ INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (83, 3, 'D5', 'available'),
 (84, 3, 'D6', 'available'),
 (85, 3, 'E1', 'available'),
-(86, 3, 'E2', 'available'),
-(87, 3, 'E3', 'available'),
-(88, 3, 'E4', 'available'),
-(89, 3, 'E5', 'available'),
-(90, 3, 'E6', 'available'),
+(86, 3, 'E2', 'taken'),
+(87, 3, 'E3', 'taken'),
+(88, 3, 'E4', 'taken'),
+(89, 3, 'E5', 'taken'),
+(90, 3, 'E6', 'taken'),
 (91, 4, 'A1', 'available'),
 (92, 4, 'A2', 'available'),
 (93, 4, 'A3', 'available'),
@@ -223,7 +295,7 @@ INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (148, 5, 'E4', 'available'),
 (149, 5, 'E5', 'available'),
 (150, 5, 'E6', 'available'),
-(151, 6, 'A1', 'available'),
+(151, 6, 'A1', 'taken'),
 (152, 6, 'A2', 'available'),
 (153, 6, 'A3', 'available'),
 (154, 6, 'A4', 'available'),
@@ -237,8 +309,8 @@ INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (162, 6, 'B6', 'available'),
 (163, 6, 'C1', 'available'),
 (164, 6, 'C2', 'available'),
-(165, 6, 'C3', 'available'),
-(166, 6, 'C4', 'available'),
+(165, 6, 'C3', 'taken'),
+(166, 6, 'C4', 'taken'),
 (167, 6, 'C5', 'available'),
 (168, 6, 'C6', 'available'),
 (169, 6, 'D1', 'available'),
@@ -373,9 +445,9 @@ INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (298, 10, 'E4', 'available'),
 (299, 10, 'E5', 'available'),
 (300, 10, 'E6', 'available'),
-(301, 11, 'A1', 'available'),
-(302, 11, 'A2', 'available'),
-(303, 11, 'A3', 'available'),
+(301, 11, 'A1', 'taken'),
+(302, 11, 'A2', 'taken'),
+(303, 11, 'A3', 'taken'),
 (304, 11, 'A4', 'available'),
 (305, 11, 'A5', 'available'),
 (306, 11, 'A6', 'available'),
@@ -471,9 +543,9 @@ INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (396, 14, 'A6', 'available'),
 (397, 14, 'B1', 'available'),
 (398, 14, 'B2', 'available'),
-(399, 14, 'B3', 'available'),
-(400, 14, 'B4', 'available'),
-(401, 14, 'B5', 'available'),
+(399, 14, 'B3', 'taken'),
+(400, 14, 'B4', 'taken'),
+(401, 14, 'B5', 'taken'),
 (402, 14, 'B6', 'available'),
 (403, 14, 'C1', 'available'),
 (404, 14, 'C2', 'available'),
@@ -523,7 +595,7 @@ INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (448, 15, 'E4', 'available'),
 (449, 15, 'E5', 'available'),
 (450, 15, 'E6', 'available'),
-(451, 16, 'A1', 'available'),
+(451, 16, 'A1', 'taken'),
 (452, 16, 'A2', 'available'),
 (453, 16, 'A3', 'available'),
 (454, 16, 'A4', 'available'),
@@ -698,7 +770,7 @@ INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (623, 21, 'D5', 'available'),
 (624, 21, 'D6', 'available'),
 (625, 21, 'E1', 'available'),
-(626, 21, 'E2', 'available'),
+(626, 21, 'E2', 'taken'),
 (627, 21, 'E3', 'available'),
 (628, 21, 'E4', 'available'),
 (629, 21, 'E5', 'available'),
@@ -927,7 +999,7 @@ INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (852, 29, 'B6', 'available'),
 (853, 29, 'C1', 'available'),
 (854, 29, 'C2', 'available'),
-(855, 29, 'C3', 'available'),
+(855, 29, 'C3', 'taken'),
 (856, 29, 'C4', 'available'),
 (857, 29, 'C5', 'available'),
 (858, 29, 'C6', 'available'),
@@ -962,7 +1034,7 @@ INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (887, 30, 'C5', 'available'),
 (888, 30, 'C6', 'available'),
 (889, 30, 'D1', 'available'),
-(890, 30, 'D2', 'available'),
+(890, 30, 'D2', 'taken'),
 (891, 30, 'D3', 'available'),
 (892, 30, 'D4', 'available'),
 (893, 30, 'D5', 'available'),
@@ -1510,7 +1582,7 @@ INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (1435, 48, 'E1', 'available'),
 (1436, 48, 'E2', 'available'),
 (1437, 48, 'E3', 'available'),
-(1438, 48, 'E4', 'available'),
+(1438, 48, 'E4', 'taken'),
 (1439, 48, 'E5', 'available'),
 (1440, 48, 'E6', 'available'),
 (1441, 49, 'A1', 'available'),
@@ -1641,14 +1713,14 @@ INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (1566, 53, 'A6', 'available'),
 (1567, 53, 'B1', 'available'),
 (1568, 53, 'B2', 'available'),
-(1569, 53, 'B3', 'available'),
-(1570, 53, 'B4', 'available'),
+(1569, 53, 'B3', 'taken'),
+(1570, 53, 'B4', 'taken'),
 (1571, 53, 'B5', 'available'),
 (1572, 53, 'B6', 'available'),
 (1573, 53, 'C1', 'available'),
 (1574, 53, 'C2', 'available'),
 (1575, 53, 'C3', 'available'),
-(1576, 53, 'C4', 'available'),
+(1576, 53, 'C4', 'taken'),
 (1577, 53, 'C5', 'available'),
 (1578, 53, 'C6', 'available'),
 (1579, 53, 'D1', 'available'),
@@ -1786,19 +1858,19 @@ INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (1711, 58, 'A1', 'available'),
 (1712, 58, 'A2', 'available'),
 (1713, 58, 'A3', 'available'),
-(1714, 58, 'A4', 'available'),
+(1714, 58, 'A4', 'taken'),
 (1715, 58, 'A5', 'available'),
 (1716, 58, 'A6', 'available'),
 (1717, 58, 'B1', 'available'),
 (1718, 58, 'B2', 'available'),
-(1719, 58, 'B3', 'available'),
+(1719, 58, 'B3', 'taken'),
 (1720, 58, 'B4', 'available'),
 (1721, 58, 'B5', 'available'),
 (1722, 58, 'B6', 'available'),
 (1723, 58, 'C1', 'available'),
 (1724, 58, 'C2', 'available'),
 (1725, 58, 'C3', 'available'),
-(1726, 58, 'C4', 'available'),
+(1726, 58, 'C4', 'taken'),
 (1727, 58, 'C5', 'available'),
 (1728, 58, 'C6', 'available'),
 (1729, 58, 'D1', 'available'),
@@ -1841,12 +1913,12 @@ INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (1766, 59, 'E2', 'available'),
 (1767, 59, 'E3', 'available'),
 (1768, 59, 'E4', 'available'),
-(1769, 59, 'E5', 'available');
-INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
+(1769, 59, 'E5', 'available'),
 (1770, 59, 'E6', 'available'),
 (1771, 60, 'A1', 'available'),
 (1772, 60, 'A2', 'available'),
-(1773, 60, 'A3', 'available'),
+(1773, 60, 'A3', 'available');
+INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (1774, 60, 'A4', 'available'),
 (1775, 60, 'A5', 'available'),
 (1776, 60, 'A6', 'available'),
@@ -1974,7 +2046,7 @@ INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (1898, 64, 'B2', 'available'),
 (1899, 64, 'B3', 'available'),
 (1900, 64, 'B4', 'available'),
-(1901, 64, 'B5', 'available'),
+(1901, 64, 'B5', 'taken'),
 (1902, 64, 'B6', 'available'),
 (1903, 64, 'C1', 'available'),
 (1904, 64, 'C2', 'available'),
@@ -2356,7 +2428,7 @@ INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (2280, 76, 'E6', 'available'),
 (2281, 77, 'A1', 'available'),
 (2282, 77, 'A2', 'available'),
-(2283, 77, 'A3', 'available'),
+(2283, 77, 'A3', 'taken'),
 (2284, 77, 'A4', 'available'),
 (2285, 77, 'A5', 'available'),
 (2286, 77, 'A6', 'available'),
@@ -2389,7 +2461,7 @@ INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (2313, 78, 'A3', 'available'),
 (2314, 78, 'A4', 'available'),
 (2315, 78, 'A5', 'available'),
-(2316, 78, 'A6', 'available'),
+(2316, 78, 'A6', 'taken'),
 (2317, 78, 'B1', 'available'),
 (2318, 78, 'B2', 'available'),
 (2319, 78, 'B3', 'available'),
@@ -3191,7 +3263,7 @@ INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (3115, 104, 'E1', 'available'),
 (3116, 104, 'E2', 'available'),
 (3117, 104, 'E3', 'available'),
-(3118, 104, 'E4', 'available'),
+(3118, 104, 'E4', 'taken'),
 (3119, 104, 'E5', 'available'),
 (3120, 104, 'E6', 'available'),
 (3121, 105, 'A1', 'available'),
@@ -3344,7 +3416,7 @@ INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (3268, 109, 'E4', 'available'),
 (3269, 109, 'E5', 'available'),
 (3270, 109, 'E6', 'available'),
-(3271, 110, 'A1', 'available'),
+(3271, 110, 'A1', 'taken'),
 (3272, 110, 'A2', 'available'),
 (3273, 110, 'A3', 'available'),
 (3274, 110, 'A4', 'available'),
@@ -3546,12 +3618,12 @@ INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (3470, 116, 'D2', 'available'),
 (3471, 116, 'D3', 'available'),
 (3472, 116, 'D4', 'available'),
-(3473, 116, 'D5', 'available');
-INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
+(3473, 116, 'D5', 'available'),
 (3474, 116, 'D6', 'available'),
 (3475, 116, 'E1', 'available'),
 (3476, 116, 'E2', 'available'),
-(3477, 116, 'E3', 'available'),
+(3477, 116, 'E3', 'available');
+INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (3478, 116, 'E4', 'available'),
 (3479, 116, 'E5', 'available'),
 (3480, 116, 'E6', 'available'),
@@ -3810,7 +3882,7 @@ INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (3733, 125, 'C1', 'available'),
 (3734, 125, 'C2', 'available'),
 (3735, 125, 'C3', 'available'),
-(3736, 125, 'C4', 'available'),
+(3736, 125, 'C4', 'taken'),
 (3737, 125, 'C5', 'available'),
 (3738, 125, 'C6', 'available'),
 (3739, 125, 'D1', 'available'),
@@ -3824,7 +3896,7 @@ INSERT INTO `seats` (`seat_id`, `showtime_id`, `seat_name`, `status`) VALUES
 (3747, 125, 'E3', 'available'),
 (3748, 125, 'E4', 'available'),
 (3749, 125, 'E5', 'available'),
-(3750, 125, 'E6', 'available');
+(3750, 125, 'E6', 'taken');
 
 -- --------------------------------------------------------
 
@@ -3992,25 +4064,55 @@ CREATE TABLE `tickets` (
 --
 
 INSERT INTO `tickets` (`ticket_id`, `user_id`, `movie_id`, `showtime_id`, `seat_id`, `purchase_date`, `ticket_price`, `status`) VALUES
-(34, 3, 1, 1, 2, '2025-03-14 08:07:33', 400, 'pending'),
-(35, 3, 1, 1, 2, '2025-03-14 08:35:37', 400, 'pending'),
-(36, 3, 1, 1, 2, '2025-03-14 08:36:12', 400, 'pending'),
-(37, 3, 1, 1, 3, '2025-03-14 08:36:50', 400, 'pending'),
-(38, 3, 1, 1, 2, '2025-03-14 08:36:50', 400, 'pending'),
-(39, 3, 1, 1, 2, '2025-03-14 08:39:05', 400, 'pending'),
-(40, 3, 1, 1, 29, '2025-03-14 08:41:55', 400, 'pending'),
-(41, 3, 1, 1, 27, '2025-03-14 08:41:55', 400, 'pending'),
-(42, 3, 1, 1, 26, '2025-03-14 08:41:55', 400, 'pending'),
-(43, 3, 1, 1, 28, '2025-03-14 08:41:55', 400, 'pending'),
-(44, 3, 1, 1, 30, '2025-03-14 08:41:55', 400, 'pending'),
-(45, 3, 2, 58, 1712, '2025-03-14 08:45:22', 250, 'pending'),
-(46, 3, 2, 58, 1713, '2025-03-14 08:45:22', 250, 'pending'),
-(47, 3, 2, 6, 151, '2025-03-14 08:45:45', 250, 'pending'),
-(48, 3, 2, 6, 151, '2025-03-14 08:46:11', 250, 'pending'),
-(49, 3, 4, 16, 452, '2025-03-14 08:51:23', 300, 'pending'),
-(50, 3, 4, 16, 451, '2025-03-14 08:51:23', 300, 'pending'),
-(51, 3, 1, 1, 3, '2025-03-14 08:54:04', 400, 'pending'),
-(52, 3, 1, 1, 3, '2025-03-14 08:55:19', 400, 'pending');
+(1, 2, 1, 1, 2, '2025-03-14 11:01:08', 400, 'pending'),
+(16, 2, 1, 1, 1, '2025-03-14 10:46:13', 400, 'pending'),
+(19, 5, 1, 1, 3, '2025-03-14 11:12:51', 400, 'pending'),
+(21, 6, 4, 16, 451, '2025-03-17 06:23:09', 300, 'booked'),
+(33, 6, 5, 125, 3750, '2025-03-17 07:06:11', 250, 'pending'),
+(34, 6, 5, 125, 3736, '2025-03-17 07:06:11', 250, 'pending'),
+(35, 3, 2, 6, 165, '2025-03-17 07:08:17', 250, 'pending'),
+(36, 3, 2, 6, 166, '2025-03-17 07:08:17', 250, 'pending'),
+(37, 3, 5, 21, 626, '2025-03-17 09:13:40', 250, 'pending'),
+(38, 3, 3, 64, 1901, '2025-03-17 09:18:58', 350, 'pending'),
+(39, 6, 5, 48, 1438, '2025-03-17 09:40:21', 250, 'booked'),
+(43, 1, 1, 1, 4, '2025-03-17 10:57:57', 400, 'pending'),
+(44, 7, 1, 53, 1576, '2025-03-17 11:03:43', 400, 'pending'),
+(45, 7, 1, 53, 1570, '2025-03-17 11:03:43', 400, 'pending'),
+(46, 7, 1, 53, 1569, '2025-03-17 11:03:43', 400, 'pending'),
+(47, 6, 3, 11, 301, '2025-03-18 06:19:13', 350, 'pending'),
+(48, 6, 3, 11, 303, '2025-03-18 06:19:13', 350, 'pending'),
+(49, 6, 3, 11, 302, '2025-03-18 06:19:13', 350, 'pending'),
+(50, 6, 2, 58, 1714, '2025-03-18 06:19:33', 250, 'pending'),
+(51, 6, 2, 58, 1726, '2025-03-18 06:19:33', 250, 'pending'),
+(52, 6, 2, 58, 1719, '2025-03-18 06:19:33', 250, 'pending'),
+(53, 6, 1, 77, 2283, '2025-03-18 06:25:11', 400, 'pending'),
+(54, 6, 1, 78, 2316, '2025-03-18 06:25:22', 400, 'used'),
+(55, 6, 1, 29, 855, '2025-03-18 06:25:34', 400, 'cancelled'),
+(56, 6, 1, 30, 890, '2025-03-18 06:25:46', 400, 'booked'),
+(57, 8, 1, 1, 5, '2025-03-19 06:56:01', 400, 'pending'),
+(58, 9, 1, 3, 90, '2025-03-20 08:35:32', 400, 'pending'),
+(59, 9, 1, 3, 89, '2025-03-20 08:35:32', 400, 'pending'),
+(60, 9, 1, 3, 87, '2025-03-20 08:35:32', 400, 'pending'),
+(61, 9, 1, 3, 86, '2025-03-20 08:35:32', 400, 'booked'),
+(62, 9, 1, 3, 88, '2025-03-20 08:35:32', 400, 'cancelled'),
+(63, 9, 1, 104, 3118, '2025-03-20 08:42:26', 400, 'used'),
+(64, 10, 3, 14, 399, '2025-03-20 09:12:27', 350, 'pending'),
+(65, 10, 3, 14, 401, '2025-03-20 09:12:27', 350, 'pending'),
+(66, 10, 3, 14, 400, '2025-03-20 09:12:27', 350, 'pending'),
+(67, 10, 2, 6, 151, '2025-03-25 18:16:53', 250, 'pending');
+
+--
+-- Triggers `tickets`
+--
+DELIMITER $$
+CREATE TRIGGER `after_ticket_delete` AFTER DELETE ON `tickets` FOR EACH ROW BEGIN
+    UPDATE seats 
+    SET status = 'available' 
+    WHERE seat_id = OLD.seat_id 
+    AND NOT EXISTS (SELECT 1 FROM tickets WHERE seat_id = OLD.seat_id);
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -4030,30 +4132,41 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `email`, `username`, `password`) VALUES
-(1, 'asd', 'asd', 'asd'),
-(2, 'qwe', 'qwe', '$2y$10$3UnZE9S6wJH1wX5joMTzYeZIYn8B8U4tTuUVh5Zd4mpgowJx6B4mu'),
+(1, 'asi@gmail.com', 'asi', '$2y$10$STzul7NDaTqdwFKHOoJhteiWhRxi7JeipldTT9z45HjF6Pn0WepR.'),
+(2, 'qwe@gmail.com', 'qwe', '$2y$10$dRvU2b9OmtOadjwVkm9dTuBMwbcTdGheZP2DR8r93nejoXxUHhsoG'),
 (3, 'zxc', 'zxc', '$2y$10$YcwynZkQ8ej2awH103bTsOQ6omPcNYWfIICEoBx6PgLcYp8Aq1EmS'),
-(4, 'email', 'asi', '$2y$10$1INQO0Vxl3hAd2/ahCwRVOPVnEVqL0XaqtEtD5csV79aOsUKDBU.u'),
-(5, 'iop', 'iop', '$2y$10$lYeIbVBd3M1gEVhgWIlTv.YYvKy6yBa7GLPxh90csMEchUPgL6ZiC'),
-(6, 'allen.email', 'allen', '$2y$10$MyhkvxL7UUSGAaoeDjlw4.5Er6cOyzUK8Bypep67FLTDl0jGlQgDW'),
-(7, 'mimaw@email', 'mimaw', '$2y$10$PpsgJBAXj8r.Nf3S6pfRNecp5PR.HwZU5RjvCdpUrYxnpV5jOog.K'),
-(8, 'fgh', 'fgh', '$2y$10$vzAqQsXYbxWCY008aDIIwOG4GfleN.wBn8zGVR1jpkinzNQSezOK2'),
-(9, 'xcv@banana.com', 'xcv', '$2y$10$IBO2WDIciJO4qgFLajJVJ.bmY4Y4hWxVxeeKnmbW8fER.jCBE3E.K'),
-(10, 'sdf@banana.apple', 'sdf', '$2y$10$7WK68LRWIDbKXBD0NwgLUuddFXMD7oHfid9Nx5XJVxaS0cojeDjPa'),
-(11, 'wer@ha.com', 'wer', '$2y$10$TbSx402ElCy9xGXwWjQu3Oc9EJFRz1hHR06N2LxAKPpBfvXsl3b0W'),
-(16, 'dfg@gmail.com', 'dfg', '$2y$10$NI.tCLN3GdLd84a4sXL2qOukjVrGqyDMcJAcMSp91BU7mQQEUBzXi'),
-(17, 'vbn@gmail.com', 'vbn', '$2y$10$yyNDIzcIsa4jt1ThGMSvyeDFbeR9Xtv7E8TQIewq2iYYHg14tjGHG'),
-(18, 'ashi@gmail.com', 'ashi', '$2y$10$Azah3IbTV8Tc2u/84WxEf.7eKAN/nuC222czkNx/79wtSye2TmVzC'),
-(94, 'yui@gmail.com', 'yui', '$2y$10$u84tlCuehcVQRd.i..PoCunZGq96sPaJjIPRXpYBISDl5Z.6tT42m'),
-(95, 'ap@gmail.com', 'ap-ap', '$2y$10$dAFgsLyn0uEarJIQMBJam.cvVsy4dChqkyHkXIPyKyeuOv27.vgni'),
-(96, 'rodas@gmail.com', 'rodas', '$2y$10$9gVomIyYrmvP/GexlNXrT.IeTy0KSC09BQrMfJHXi1c4ncm7x3BaG'),
-(97, 'flick@gmail.com', 'flick', '$2y$10$ehzonp72YZ9cmS.Lp7QmuOVXUMCp/MDyta.IZmGpyPbRYGsZ4qWp2'),
-(98, 'ewq@gmail.com', 'ewq', '$2y$10$K8rKkgQf2DrA8QuvIaM0/.BTm4gxhhA29Oas5S8Q0skSys6YqT9NS'),
-(100, 'tre@gmail.com', 'tre', '$2y$10$oYpTvzryBuSpB6IaWBw63OR.ln67ZmZsMapqAhY0atPrNJHgyjILq');
+(4, 'asd@gmail.com', 'asd', '$2y$10$H1eFJ.DwIhVUK/NJsWyql.3yNCmM5cL0hXsFXi1bRoxDc03zj0D2i'),
+(5, 'tyu@gmail.com', 'tyu', '$2y$10$DSCN0zg6Eq0fUp15tVcVEedMjfezRDVdsN/8JiioZzO53y2aQaQDS'),
+(6, 'nyuu@gmail.com', 'nyuu', '$2y$10$KHim/ssiCJurBf85/ABLg.GODVx/D/SxeDW6O7FJIMEGNpIVUcP0.'),
+(7, 'tsk@gmail.com', 'tsk', '$2y$10$KYFlbkghbib6vCMdpn3aHOVWfqcbgmyELQ01hUNhvmJcGp6RJr77y'),
+(8, 'meow@gmail.com', 'meow', '$2y$10$sMFYAx9lQpEf3l1huGvYceRC4oVigqhxYbGIqFxBdKZS8GxzfMIvO'),
+(9, 'huh@gmail.com', 'huh', '$2y$10$aBFN0TaLErrDNnY3l8zUC.JnS5u82kduFodR2LfqOef5D9m4uSo2S'),
+(10, 'josh@example.com', 'joshua', '$2y$10$VMQF2XUZgrNf8x8fREZQ2OHhGKb/m4PS80Yyajc85RKVdJIXOwVnS'),
+(11, 'josh123@example.com', 'joshua12', '$2y$10$hnxkHmzfm.gnKiQrn08vB.rEao2YQU/D45.Knbli4ZFRW1lFx42Im');
+
+--
+-- Triggers `users`
+--
+DELIMITER $$
+CREATE TRIGGER `delete_user_tickets` AFTER DELETE ON `users` FOR EACH ROW DELETE FROM tickets WHERE user_id = OLD.user_id
+$$
+DELIMITER ;
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `drinks`
+--
+ALTER TABLE `drinks`
+  ADD PRIMARY KEY (`drink_id`);
+
+--
+-- Indexes for table `foods`
+--
+ALTER TABLE `foods`
+  ADD PRIMARY KEY (`food_id`);
 
 --
 -- Indexes for table `movie`
@@ -4061,6 +4174,15 @@ INSERT INTO `users` (`user_id`, `email`, `username`, `password`) VALUES
 ALTER TABLE `movie`
   ADD PRIMARY KEY (`movie_id`),
   ADD UNIQUE KEY `tmdb_id` (`tmdb_id`);
+
+--
+-- Indexes for table `orders`
+--
+ALTER TABLE `orders`
+  ADD PRIMARY KEY (`order_id`),
+  ADD KEY `fk_user` (`user_id`),
+  ADD KEY `fk_food` (`food_id`),
+  ADD KEY `fk_drink` (`drink_id`);
 
 --
 -- Indexes for table `seats`
@@ -4100,10 +4222,28 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `drinks`
+--
+ALTER TABLE `drinks`
+  MODIFY `drink_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `foods`
+--
+ALTER TABLE `foods`
+  MODIFY `food_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `movie`
 --
 ALTER TABLE `movie`
   MODIFY `movie_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT for table `orders`
+--
+ALTER TABLE `orders`
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `seats`
@@ -4121,17 +4261,25 @@ ALTER TABLE `showtimes`
 -- AUTO_INCREMENT for table `tickets`
 --
 ALTER TABLE `tickets`
-  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=105;
 
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `orders`
+--
+ALTER TABLE `orders`
+  ADD CONSTRAINT `fk_drink` FOREIGN KEY (`drink_id`) REFERENCES `drinks` (`drink_id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_food` FOREIGN KEY (`food_id`) REFERENCES `foods` (`food_id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `seats`
@@ -4153,6 +4301,31 @@ ALTER TABLE `tickets`
   ADD CONSTRAINT `fk_tickets_seat` FOREIGN KEY (`seat_id`) REFERENCES `seats` (`seat_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_tickets_showtime` FOREIGN KEY (`showtime_id`) REFERENCES `showtimes` (`showtime_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_tickets_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
+
+DELIMITER $$
+--
+-- Events
+--
+CREATE DEFINER=`root`@`localhost` EVENT `reset_ticket_id` ON SCHEDULE EVERY 10 MINUTE STARTS '2025-03-14 18:06:21' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
+    -- Find the smallest missing ID
+    SET @next_id = (SELECT MIN(t1.ticket_id) + 1 
+                    FROM tickets t1 
+                    LEFT JOIN tickets t2 ON t1.ticket_id + 1 = t2.ticket_id
+                    WHERE t2.ticket_id IS NULL);
+
+    -- If all IDs are consecutive, set to the next available after MAX
+    IF @next_id IS NULL THEN
+        SET @next_id = (SELECT IFNULL(MAX(ticket_id), 0) + 1 FROM tickets);
+    END IF;
+
+    -- Apply new auto_increment value
+    SET @sql = CONCAT('ALTER TABLE tickets AUTO_INCREMENT = ', @next_id);
+    PREPARE stmt FROM @sql;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;
+END$$
+
+DELIMITER ;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

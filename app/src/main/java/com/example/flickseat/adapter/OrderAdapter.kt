@@ -44,6 +44,7 @@ class OrderAdapter(private val orders: List<Order>) :
         val etAmount: TextInputEditText = itemView.findViewById(R.id.etAmount)
         val btnMinus: ImageView = itemView.findViewById(R.id.btnMinus)
         val btnAdd: ImageView = itemView.findViewById(R.id.btnAdd)
+        val ivPicture: ImageView = itemView.findViewById(R.id.ivPicture)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderViewHolder {
@@ -63,6 +64,17 @@ class OrderAdapter(private val orders: List<Order>) :
                 if (isNotEmpty()) append(", ")
                 append(order.drink_name)
             }
+        }
+
+        // Set ImageView based on food or drink name
+        val context = holder.itemView.context
+        val imageName = (order.food_name ?: order.drink_name)?.lowercase()?.replace(" ", "_") ?: "default_image"
+        val imageResId = context.resources.getIdentifier(imageName, "drawable", context.packageName)
+
+        if (imageResId != 0) {
+            holder.ivPicture.setImageResource(imageResId)
+        } else {
+            holder.ivPicture.setImageResource(R.drawable.buttered_popcorn) // Fallback image
         }
 
         holder.tvName.text = name.ifEmpty { "Unknown Item" }

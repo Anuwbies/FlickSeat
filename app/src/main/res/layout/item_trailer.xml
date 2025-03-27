@@ -10,16 +10,41 @@
         android:layout_width="160dp"
         android:layout_height="90dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/shonic"
+        android:visibility="gone"
+        android:src="@color/background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
+        android:id="@+id/dummytrailer"
+        android:layout_width="160dp"
+        android:layout_height="90dp"
+        android:scaleType="centerCrop"
+        android:visibility="visible"
+        android:src="@color/background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/dummytrailer"
+        app:layout_constraintEnd_toEndOf="@+id/dummytrailer"
+        app:layout_constraintStart_toStartOf="@+id/dummytrailer"
+        app:layout_constraintTop_toTopOf="@+id/dummytrailer" />
+
+    <ImageView
+        android:id="@+id/playIcon"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:src="@drawable/play"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

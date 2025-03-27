@@ -22,7 +22,8 @@ data class Movie(
     val rating: Double,
     val tmdb_id: Int,
     val status: String,
-    val movie_price: Int
+    val movie_price: Int,
+    var poster_path: String
 )
 
 data class MovieResponse(

@@ -91,10 +91,13 @@ class account : Fragment() {
     }
 
     private fun showLogoutConfirmationDialog() {
+        val dimBg = requireActivity().findViewById<ImageView>(R.id.dimBg) // Find dimBg ImageView
+
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_box, null)
         val dialog = AlertDialog.Builder(requireContext()).setView(dialogView).create()
 
         dialog.show()
+        dimBg.visibility = View.VISIBLE // Show dim background
 
         dialog.window?.setLayout(
             (resources.displayMetrics.widthPixels * 0.85).toInt(),
@@ -114,7 +117,13 @@ class account : Fragment() {
             dialog.dismiss()
             performLogout()
         }
+
+        // Hide dim background when dialog is dismissed
+        dialog.setOnDismissListener {
+            dimBg.visibility = View.GONE
+        }
     }
+
 
     private fun performLogout() {
         sharedPreferences.edit().clear().apply()

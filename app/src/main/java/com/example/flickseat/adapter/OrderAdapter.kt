@@ -1,8 +1,6 @@
 package com.example.flickseat.adapter
 
 import android.annotation.SuppressLint
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,9 +9,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.flickseat.R
 import com.example.flickseat.database.Order
-import com.google.android.material.textfield.TextInputEditText
 
-class OrderAdapter(private val orders: List<Order>) :
+class OrderAdapter(orders: List<Order>) :
     RecyclerView.Adapter<OrderAdapter.OrderViewHolder>() {
 
     private val groupedOrders: List<Order>
@@ -35,15 +32,13 @@ class OrderAdapter(private val orders: List<Order>) :
         groupedOrders = orderMap.map { (_, pair) ->
             val (quantity, baseOrder) = pair
             baseOrder.copy(quantity = quantity) // Create a new Order with updated quantity
-        }
+        }.sortedWith(compareBy({ it.food_name.isNullOrEmpty() }, { it.food_name }, { it.drink_name }))
     }
+
 
     inner class OrderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvName: TextView = itemView.findViewById(R.id.tvName)
         val tvQuantity: TextView = itemView.findViewById(R.id.tvQuantity)
-        val etAmount: TextInputEditText = itemView.findViewById(R.id.etAmount)
-        val btnMinus: ImageView = itemView.findViewById(R.id.btnMinus)
-        val btnAdd: ImageView = itemView.findViewById(R.id.btnAdd)
         val ivPicture: ImageView = itemView.findViewById(R.id.ivPicture)
     }
 
@@ -53,10 +48,9 @@ class OrderAdapter(private val orders: List<Order>) :
         return OrderViewHolder(view)
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "DiscouragedApi")
     override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
         val order = groupedOrders[position]
-        val maxQuantity = order.quantity // Maximum quantity available for this item
 
         val name = buildString {
             if (!order.food_name.isNullOrEmpty()) append(order.food_name)
@@ -68,7 +62,7 @@ class OrderAdapter(private val orders: List<Order>) :
 
         // Set ImageView based on food or drink name
         val context = holder.itemView.context
-        val imageName = (order.food_name ?: order.drink_name)?.lowercase()?.replace(" ", "_") ?: "default_image"
+        val imageName = (order.food_name ?: order.drink_name)?.lowercase()?.replace(" ", "_") ?: "buttered_popcorn"
         val imageResId = context.resources.getIdentifier(imageName, "drawable", context.packageName)
 
         if (imageResId != 0) {
@@ -78,42 +72,7 @@ class OrderAdapter(private val orders: List<Order>) :
         }
 
         holder.tvName.text = name.ifEmpty { "Unknown Item" }
-        holder.tvQuantity.text = "x${maxQuantity}"
-
-        // Initialize etAmount with 0
-        holder.etAmount.setText("0")
-
-        holder.btnAdd.setOnClickListener {
-            val currentAmount = holder.etAmount.text.toString().toIntOrNull() ?: 0
-            if (currentAmount < maxQuantity) { // Ensure it does not exceed available quantity
-                holder.etAmount.setText((currentAmount + 1).toString())
-            }
-        }
-
-        holder.btnMinus.setOnClickListener {
-            val currentAmount = holder.etAmount.text.toString().toIntOrNull() ?: 0
-            if (currentAmount > 0) { // Ensure it does not go below 0
-                holder.etAmount.setText((currentAmount - 1).toString())
-            }
-        }
-
-        // TextWatcher to limit manual input
-        holder.etAmount.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                val enteredValue = s.toString().toIntOrNull() ?: 0
-                if (enteredValue > maxQuantity) {
-                    holder.etAmount.setText(maxQuantity.toString())
-                    holder.etAmount.setSelection(holder.etAmount.text!!.length) // Move cursor to end
-                } else if (enteredValue < 0) {
-                    holder.etAmount.setText("0")
-                    holder.etAmount.setSelection(1)
-                }
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
+        holder.tvQuantity.text = "x${order.quantity}"
     }
 
     override fun getItemCount(): Int = groupedOrders.size

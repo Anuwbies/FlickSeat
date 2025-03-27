@@ -36,6 +36,15 @@
                 app:layout_constraintEnd_toEndOf="@+id/featured"
                 app:layout_constraintStart_toStartOf="@+id/featured" />
 
+            <ProgressBar
+                android:id="@+id/loading"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                app:layout_constraintBottom_toBottomOf="@+id/featured"
+                app:layout_constraintEnd_toEndOf="@+id/featured"
+                app:layout_constraintStart_toStartOf="@+id/featured"
+                app:layout_constraintTop_toTopOf="@+id/featured" />
+
             <com.blueiobase.api.android.strokedtextview.StrokedTextView
                 android:id="@+id/title"
                 android:layout_width="match_parent"

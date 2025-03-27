@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.flickseat.R
 import com.example.flickseat.adapter.FoodDrinkAdapter
 import com.example.flickseat.adapter.OrderAdapter
-import com.example.flickseat.database.FoodDrink
 import com.example.flickseat.database.FoodDrinkResponse
 import com.example.flickseat.database.Order
 import com.example.flickseat.database.OrderResponse
@@ -72,8 +71,34 @@ class fooddrink : Fragment(), FoodDrinkAdapter.OnTotalPriceChangeListener {
         fetchUserTickets()
 
         btnPrcdtoPayment.setOnClickListener {
-            showPaymentBottomSheet()
+            val selectedFoodItems = mutableListOf<Pair<Int, Int>>()
+            val selectedDrinkItems = mutableListOf<Pair<Int, Int>>()
+
+            (foodsRV.adapter as? FoodDrinkAdapter)?.let { adapter ->
+                for ((index, item) in adapter.itemList.withIndex()) {
+                    val quantity = adapter.getItemQuantity(index)
+                    if (quantity > 0) {
+                        selectedFoodItems.add(Pair(item.id, quantity))
+                    }
+                }
+            }
+
+            (drinksRV.adapter as? FoodDrinkAdapter)?.let { adapter ->
+                for ((index, item) in adapter.itemList.withIndex()) {
+                    val quantity = adapter.getItemQuantity(index)
+                    if (quantity > 0) {
+                        selectedDrinkItems.add(Pair(item.id, quantity))
+                    }
+                }
+            }
+
+            if (selectedFoodItems.isEmpty() && selectedDrinkItems.isEmpty()) {
+                Toast.makeText(requireContext(), "Please select at least one item.", Toast.LENGTH_SHORT).show()
+            } else {
+                showPaymentBottomSheet()
+            }
         }
+
 
         val imgOrders = view.findViewById<ImageView>(R.id.imgOrders)
 
@@ -222,6 +247,8 @@ class fooddrink : Fragment(), FoodDrinkAdapter.OnTotalPriceChangeListener {
             return
         }
 
+        val dimBg = requireActivity().findViewById<ImageView>(R.id.dimBg) // Find dimBg ImageView
+
         bottomSheetDialog = BottomSheetDialog(requireContext())
         val view = layoutInflater.inflate(R.layout.bottom_sheet_payment, null)
         bottomSheetDialog!!.setContentView(view)
@@ -358,10 +385,13 @@ class fooddrink : Fragment(), FoodDrinkAdapter.OnTotalPriceChangeListener {
         }
 
         bottomSheetDialog?.setOnDismissListener {
+            dimBg.visibility = View.GONE // Hide dim background when bottom sheet is dismissed
             bottomSheetDialog = null
         }
-
         bottomSheetDialog?.show()
+        dimBg.postDelayed({
+            dimBg.visibility = View.VISIBLE
+        }, 100)
     }
 
     private fun insertOrder(userId: Int, foodId: Int?, drinkId: Int?, quantity: Int, onComplete: (Boolean) -> Unit) {
@@ -390,42 +420,31 @@ class fooddrink : Fragment(), FoodDrinkAdapter.OnTotalPriceChangeListener {
     }
 
     private fun showOrdersDialog(orders: List<Order>) {
+        val dimBg = requireActivity().findViewById<ImageView>(R.id.dimBg) // Find dimBg ImageView
+
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialogbox_orders, null)
         val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogView)
             .create()
 
-        val ordersRV = dialogView.findViewById<RecyclerView>(R.id.ordersRV)
-        val btnClaimOrder = dialogView.findViewById<Button>(R.id.btnClaimOrder)
-
-        ordersRV.layoutManager = LinearLayoutManager(requireContext())
-        val adapter = OrderAdapter(orders)
-        ordersRV.adapter = adapter
-
-        btnClaimOrder.setOnClickListener {
-            Toast.makeText(requireContext(), "Please proceed to the counter", Toast.LENGTH_SHORT).show()
-            dialog.dismiss()
-        }
-
         dialog.show()
+        dimBg.visibility = View.VISIBLE // Show dim background
+
+        // Set the width to 75% of the screen, height WRAPS content
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.75).toInt(),
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+
+        val ordersRV = dialogView.findViewById<RecyclerView>(R.id.ordersRV)
+        ordersRV.layoutManager = LinearLayoutManager(requireContext())
+        ordersRV.adapter = OrderAdapter(orders)
+
+        // Hide dim background when dialog is dismissed
+        dialog.setOnDismissListener {
+            dimBg.visibility = View.GONE
+        }
     }
 
-    private fun fetchOrders(userId: Int, ordersRV: RecyclerView) {
-        RetrofitClient.instance.getOrders(userId).enqueue(object : Callback<OrderedResponse> {
-            override fun onResponse(call: Call<OrderedResponse>, response: Response<OrderedResponse>) {
-                if (response.isSuccessful && response.body()?.status == "success") {
-                    val orders = response.body()?.orders ?: emptyList()
-                    val adapter = OrderAdapter(orders)
-                    ordersRV.adapter = adapter
-                } else {
-                    Toast.makeText(requireContext(), "No orders found.", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onFailure(call: Call<OrderedResponse>, t: Throwable) {
-                Toast.makeText(requireContext(), "Failed to load orders: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
 
 }

@@ -12,4 +12,11 @@ interface TMDBService {
         @Query("api_key") apiKey: String,
         @Query("language") language: String = "en-US"
     ): Call<TMDBVideoResponse>
+
+    @GET("movie/{movie_id}")
+    fun getMovieDetails(
+        @Path("movie_id") movieId: Int,
+        @Query("api_key") apiKey: String,
+        @Query("language") language: String = "en-US"
+    ): Call<TMDBMovieResponse>
 }

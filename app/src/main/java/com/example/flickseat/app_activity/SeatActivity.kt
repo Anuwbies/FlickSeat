@@ -321,16 +321,12 @@ class SeatActivity : AppCompatActivity() {
 
             bottomSheetDialog?.dismiss()
 
-            val intent = Intent(this@SeatActivity, PaidActivity::class.java).apply {
-                putExtra("user_id", userId)
-                putExtra("movie_id", movieId)
-                putExtra("showtime_id", showtimeId)
-                putExtra("selected_seats", selectedSeatIds.joinToString(","))
-                putExtra("total_price", totalPrice)
-                putExtra("payment_method", selectedPaymentMethod?.text.toString())
+            val intent = Intent(this@SeatActivity, Botnav::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
             startActivity(intent)
             finish()
+
         }
 
         bottomSheetDialog?.setOnDismissListener {

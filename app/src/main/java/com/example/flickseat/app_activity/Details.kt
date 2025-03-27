@@ -8,20 +8,24 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.GlideException
 import com.example.flickseat.R
-import com.example.flickseat.adapter.Trailer
 import com.example.flickseat.adapter.TrailerAdapter
 import com.example.flickseat.database.Movie
 import com.example.flickseat.database.MovieResponse
 import com.example.flickseat.database.RetrofitClient
 import com.example.flickseat.tmdb_api.TMDBClient
+import com.example.flickseat.tmdb_api.TMDBMovieResponse
 import com.example.flickseat.tmdb_api.TMDBVideoResponse
+import com.example.flickseat.tmdb_api.Trailer
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -62,16 +66,32 @@ class Details : AppCompatActivity() {
                     val movieResponse = response.body()
                     if (movieResponse?.status == "success" && !movieResponse.movies.isNullOrEmpty()) {
                         val movie = movieResponse.movies.first()
-                        displayMovieDetails(movie)
 
-                        // Pass movie_id
+                        // Fetch TMDB details (poster, etc.)
+                        TMDBClient.instance.getMovieDetails(movie.tmdb_id, "47478fd8ee52c5b99e942674d01e0c32")
+                            .enqueue(object : Callback<TMDBMovieResponse> {
+                                override fun onResponse(call: Call<TMDBMovieResponse>, response: Response<TMDBMovieResponse>) {
+                                    if (response.isSuccessful) {
+                                        val movieDetails = response.body()
+                                        movie.poster_path = movieDetails?.poster_path ?: ""
+
+                                        displayMovieDetails(movie)
+                                    }
+                                }
+
+                                override fun onFailure(call: Call<TMDBMovieResponse>, t: Throwable) {
+                                    Log.e(TAG, "Failed to fetch poster", t)
+                                    displayMovieDetails(movie) // Show details without poster
+                                }
+                            })
+
+                        // Enable seat booking if the movie is "Now Showing"
                         if (movie.status.equals("now showing", ignoreCase = true)) {
                             btnBookSeat.visibility = View.VISIBLE
                             btnBookSeat.isEnabled = true
-
                             btnBookSeat.setOnClickListener {
                                 val intent = Intent(this@Details, SeatActivity::class.java)
-                                intent.putExtra("movie_id", movie.movie_id)  // Pass movie_id
+                                intent.putExtra("movie_id", movie.movie_id)
                                 startActivity(intent)
                             }
                         } else {
@@ -94,6 +114,7 @@ class Details : AppCompatActivity() {
         })
     }
 
+
     private fun fetchMovieTrailers(tmdbId: Int) {
         val apiKey = "47478fd8ee52c5b99e942674d01e0c32"
         TMDBClient.instance.getMovieVideos(tmdbId, apiKey).enqueue(object : Callback<TMDBVideoResponse> {
@@ -105,7 +126,14 @@ class Details : AppCompatActivity() {
                             it.site.equals("YouTube", ignoreCase = true) && it.type.equals("Trailer", ignoreCase = true)
                         }.map { Trailer(it.key, it.name) }
 
-                        displayTrailers(trailers)
+                        Log.d(TAG, "Trailers fetched: ${trailers.size}")
+
+                        runOnUiThread {
+                            val trailerRV = findViewById<RecyclerView>(R.id.trailerRV)
+                            trailerRV.layoutManager = LinearLayoutManager(this@Details, LinearLayoutManager.HORIZONTAL, false)
+                            trailerRV.adapter = TrailerAdapter(this@Details, trailers)
+                            trailerRV.visibility = View.VISIBLE
+                        }
                     } else {
                         Log.e(TAG, "No trailers found")
                     }
@@ -123,6 +151,7 @@ class Details : AppCompatActivity() {
     @SuppressLint("DiscouragedApi", "SetTextI18n")
     private fun displayMovieDetails(movie: Movie) {
         val posterImageView = findViewById<ImageView>(R.id.moviePoster)
+        val loadingIndicator = findViewById<ProgressBar>(R.id.loading)
         val titleTextView = findViewById<TextView>(R.id.tvTitle)
         val genreTextView = findViewById<TextView>(R.id.tvGenre)
         val dateTextView = findViewById<TextView>(R.id.tvDate)
@@ -137,31 +166,47 @@ class Details : AppCompatActivity() {
         ratingTextView.text = "  ☆ ${movie.rating}"
         overviewTextView.text = movie.overview
 
-        val resourceName = "p${movie.tmdb_id}"
-        val resId = resources.getIdentifier(resourceName, "drawable", packageName)
-        if (resId != 0) {
-            posterImageView.setImageResource(resId)
-        } else {
-            posterImageView.setImageResource(R.drawable.shonic)
-        }
+        // Fetch movie poster from TMDB API
+        val posterUrl = "https://image.tmdb.org/t/p/w500${movie.poster_path}"
 
-        titleTextView.maxLines = 1
-        overviewTextView.maxLines = 3
+        // Show loading indicator
+        loadingIndicator.visibility = View.VISIBLE
+        posterImageView.visibility = View.INVISIBLE
+
+        Glide.with(this)
+            .load(posterUrl)
+            .placeholder(R.drawable.btn_empty)
+            .error(R.drawable.btn_empty)
+            .listener(object : com.bumptech.glide.request.RequestListener<android.graphics.drawable.Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    loadingIndicator.visibility = View.GONE
+                    posterImageView.visibility = View.VISIBLE
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: android.graphics.drawable.Drawable?,
+                    model: Any?,
+                    target: com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable>?,
+                    dataSource: com.bumptech.glide.load.DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    loadingIndicator.visibility = View.GONE
+                    posterImageView.visibility = View.VISIBLE
+                    return false
+                }
+            })
+            .into(posterImageView)
 
         titleTextView.setOnClickListener {
             titleTextView.maxLines = if (titleTextView.maxLines == 1) Integer.MAX_VALUE else 1
             titleTextView.ellipsize = if (titleTextView.maxLines == 1) TextUtils.TruncateAt.END else null
         }
-
-        overviewTextView.setOnClickListener {
-            overviewTextView.maxLines = if (overviewTextView.maxLines == 3) Integer.MAX_VALUE else 3
-            overviewTextView.ellipsize = if (overviewTextView.maxLines == 3) TextUtils.TruncateAt.END else null
-        }
     }
 
-    private fun displayTrailers(trailers: List<Trailer>) {
-        val trailerRV = findViewById<RecyclerView>(R.id.trailerRV)
-        trailerRV.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        trailerRV.adapter = TrailerAdapter(this, trailers)
-    }
 }

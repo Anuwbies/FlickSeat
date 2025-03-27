@@ -15,3 +15,15 @@ data class TMDBVideo(
     val size: Int,
     val type: String
 )
+
+data class TMDBMovieResponse(
+    val id: Int,
+    val title: String,
+    val tmdb_id: Int,
+    val poster_path: String?
+)
+
+data class Trailer(
+    val youtubeId: String,
+    val name: String
+)

@@ -154,4 +154,12 @@
                 app:layout_constraintTop_toBottomOf="@+id/tvFoods" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <ImageView
+        android:id="@+id/dimBg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:elevation="2dp"
+        android:src="#B3000000"/>
 </FrameLayout>

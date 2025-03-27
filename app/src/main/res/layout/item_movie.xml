@@ -19,6 +19,15 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@color/background" />
 
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toBottomOf="@+id/moviePoster"
+        app:layout_constraintEnd_toEndOf="@+id/moviePoster"
+        app:layout_constraintStart_toStartOf="@+id/moviePoster"
+        app:layout_constraintTop_toTopOf="@+id/moviePoster" />
+
     <com.blueiobase.api.android.strokedtextview.StrokedTextView
         android:id="@+id/movieTitle"
         android:layout_width="match_parent"

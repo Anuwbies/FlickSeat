@@ -24,7 +24,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/p939243"
+                android:src="@color/background"
                 app:layout_constraintDimensionRatio="2:3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -38,6 +38,15 @@
                 app:layout_constraintBottom_toBottomOf="@+id/moviePoster"
                 app:layout_constraintEnd_toEndOf="@+id/moviePoster"
                 app:layout_constraintStart_toStartOf="@+id/moviePoster" />
+
+            <ProgressBar
+                android:id="@+id/loading"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                app:layout_constraintBottom_toBottomOf="@+id/moviePoster"
+                app:layout_constraintEnd_toEndOf="@+id/moviePoster"
+                app:layout_constraintStart_toStartOf="@+id/moviePoster"
+                app:layout_constraintTop_toTopOf="@+id/moviePoster" />
 
             <com.blueiobase.api.android.strokedtextview.StrokedTextView
                 android:id="@+id/tvTitle"
@@ -206,7 +215,7 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="160dp"
+        android:layout_height="100dp"
         android:src="@drawable/gradient_bg"
         android:layout_gravity="bottom"/>
 

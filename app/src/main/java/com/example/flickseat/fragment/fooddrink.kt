@@ -366,6 +366,7 @@ class fooddrink : Fragment(), FoodDrinkAdapter.OnTotalPriceChangeListener {
                         Toast.makeText(requireContext(), "Order failed. Please try again.", Toast.LENGTH_SHORT).show()
                     }
                     bottomSheetDialog?.dismiss()
+                    dimBg.visibility = View.GONE
                 }
             }
 
@@ -385,8 +386,8 @@ class fooddrink : Fragment(), FoodDrinkAdapter.OnTotalPriceChangeListener {
         }
 
         bottomSheetDialog?.setOnDismissListener {
-            dimBg.visibility = View.GONE // Hide dim background when bottom sheet is dismissed
             bottomSheetDialog = null
+            dimBg.visibility = View.GONE // Hide dim background when bottom sheet is dismissed
         }
         bottomSheetDialog?.show()
         dimBg.postDelayed({

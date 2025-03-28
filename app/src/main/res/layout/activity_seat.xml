@@ -142,7 +142,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingStart="5dp"
-                        android:text="Booked"
+                        android:text="Reserved"
                         android:textColor="@color/white"
                         android:textSize="15sp" />
                 </LinearLayout>
@@ -208,4 +208,12 @@
             android:textSize="20sp"
             android:textColor="@color/white" />
     </LinearLayout>
+
+    <ImageView
+    android:id="@+id/dimBg"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="gone"
+    android:elevation="2dp"
+    android:src="#B3000000"/>
 </FrameLayout>

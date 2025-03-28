@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/black">
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnStatus"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/lighGrey"
+        android:layout_height="27dp"
+        android:background="@drawable/btn_empty"
+        android:layout_marginHorizontal="5dp"
         android:text="Status"
+        android:textAllCaps="false"
+        android:textSize="11sp"
         android:textColor="@color/white"/>
 
 </FrameLayout>

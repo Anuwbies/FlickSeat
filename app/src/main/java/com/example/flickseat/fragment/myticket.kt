@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.flickseat.R
+import com.example.flickseat.adapter.StatusAdapter
 import com.example.flickseat.adapter.TicketAdapter
 import com.example.flickseat.database.RetrofitClient
 import com.example.flickseat.database.Ticket
@@ -24,8 +25,13 @@ class myticket : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var ticketAdapter: TicketAdapter
-    private var ticketList: MutableList<Ticket> = mutableListOf()
+    private lateinit var statusRecyclerView: RecyclerView
+    private lateinit var statusAdapter: StatusAdapter
     private lateinit var tvNoTicketFound: TextView
+
+    private var ticketList: MutableList<Ticket> = mutableListOf()
+    private var filteredTicketList: MutableList<Ticket> = mutableListOf()
+    private val statusList: List<String> = listOf("All", "Pending", "Confirmed", "Cancelled", "Used")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,15 +39,23 @@ class myticket : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_myticket, container, false)
 
+        // Initialize UI components
         recyclerView = view.findViewById(R.id.ticketsRV)
+        statusRecyclerView = view.findViewById(R.id.statusRV)
         tvNoTicketFound = view.findViewById(R.id.tvNoticketfound)
-        val btnFilter: View = view.findViewById(R.id.btnFilter)
 
+        // Setup Status RecyclerView
+        statusRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        statusAdapter = StatusAdapter(statusList) { selectedStatus -> filterTickets(selectedStatus) }
+        statusRecyclerView.adapter = statusAdapter
+
+        // Setup Tickets RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        ticketAdapter = TicketAdapter(ticketList)
+        ticketAdapter = TicketAdapter(filteredTicketList)
         recyclerView.adapter = ticketAdapter
 
-        btnFilter.setOnClickListener { showSortMenu(it) }
+        statusRecyclerView.visibility = View.GONE
+        tvNoTicketFound.visibility = View.VISIBLE
 
         fetchUserTickets()
         return view
@@ -69,9 +83,20 @@ class myticket : Fragment() {
                     if (ticketResponse?.status == "success") {
                         ticketList.clear()
                         ticketList.addAll(ticketResponse.tickets ?: emptyList())
-                        ticketAdapter.notifyDataSetChanged()
 
-                        tvNoTicketFound.visibility = if (ticketList.isEmpty()) View.VISIBLE else View.GONE
+                        // Sort tickets by latest purchase_date first
+                        ticketList.sortByDescending { it.purchase_date }
+
+                        if (ticketList.isEmpty()) {
+                            // Hide statusRecyclerView if no tickets are fetched initially
+                            statusRecyclerView.visibility = View.GONE
+                            tvNoTicketFound.visibility = View.VISIBLE
+                        } else {
+                            // Show statusRecyclerView only if tickets exist
+                            statusRecyclerView.visibility = View.VISIBLE
+                            tvNoTicketFound.visibility = View.GONE
+                            filterTickets("All")  // Show all tickets initially
+                        }
                     }
                 } else {
                     Toast.makeText(requireContext(), "Error: ${response.message()}", Toast.LENGTH_SHORT).show()
@@ -83,58 +108,22 @@ class myticket : Fragment() {
                 Toast.makeText(requireContext(), "Failed to load tickets: ${t.message}", Toast.LENGTH_SHORT).show()
 
                 tvNoTicketFound.visibility = View.VISIBLE
+                statusRecyclerView.visibility = View.GONE
             }
         })
     }
 
-    private fun showSortMenu(view: View) {
-        val popupMenu = android.widget.PopupMenu(requireContext(), view)
-        popupMenu.menuInflater.inflate(R.menu.filter_menu, popupMenu.menu)
-
-        popupMenu.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.filter_movie -> sortTickets("Movie")
-                R.id.filter_day -> sortTickets("Day")
-                R.id.filter_time -> sortTickets("Time")
-                R.id.filter_status -> sortTickets("Status")
-            }
-            true
-        }
-        popupMenu.show()
-    }
-
     @SuppressLint("NotifyDataSetChanged")
-    private fun sortTickets(sortType: String) {
-        when (sortType) {
-            "Movie" -> ticketList.sortBy { it.movie_title }
+    private fun filterTickets(status: String) {
+        filteredTicketList.clear()
 
-            "Day" -> {
-                val dayOrder = mapOf(
-                    "Mon" to 1,
-                    "Tue" to 2,
-                    "Wed" to 3,
-                    "Thu" to 4,
-                    "Fri" to 5
-                )
-
-                ticketList.sortBy { dayOrder[it.show_day] ?: Int.MAX_VALUE }
-            }
-
-            "Time" -> {
-                val timeOrder = mapOf(
-                    "10:00am" to 1,
-                    "12:00pm" to 2,
-                    "4:00pm"  to 3,
-                    "8:00pm"  to 4,
-                    "12:00am" to 5
-                )
-
-                ticketList.sortBy { timeOrder[it.show_time] ?: Int.MAX_VALUE }
-            }
-
-            "Status" -> ticketList.sortBy { it.status }
+        if (status == "All") {
+            filteredTicketList.addAll(ticketList)
+        } else {
+            filteredTicketList.addAll(ticketList.filter { it.status == status })
         }
 
         ticketAdapter.notifyDataSetChanged()
+        tvNoTicketFound.visibility = if (filteredTicketList.isEmpty()) View.VISIBLE else View.GONE
     }
 }

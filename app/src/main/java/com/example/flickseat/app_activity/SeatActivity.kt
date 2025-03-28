@@ -3,6 +3,8 @@ package com.example.flickseat.app_activity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -13,7 +15,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.flickseat.PaidActivity
 import com.example.flickseat.R
 import com.example.flickseat.adapter.SeatAdapter
 import com.example.flickseat.adapters.DayAdapter
@@ -202,6 +203,8 @@ class SeatActivity : AppCompatActivity() {
             return
         }
 
+        val dimBg =findViewById<ImageView>(R.id.dimBg) // Find dimBg ImageView
+
         bottomSheetDialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.bottom_sheet_payment, null)
         bottomSheetDialog!!.setContentView(view)
@@ -264,76 +267,84 @@ class SeatActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            var bookedSeatsCount = 0
+            Toast.makeText(this, "Booking seat/s, Please Wait...", Toast.LENGTH_SHORT).show() // Notify user once
+
             val totalSeats = selectedSeats.size
+            var bookedSeatsCount = 0
+            val delayBetweenBookings = 500L // 500 milliseconds delay
 
-            for (seat in selectedSeats) {
-                if (seat.seat_id == -1) {
-                    Log.e("TicketBooking", "Skipping invalid seat: ${seat.seat_name}")
-                    continue
-                }
+            selectedSeats.forEachIndexed { index, seat ->
+                val delayTime = index * delayBetweenBookings
 
-                Log.d("TicketBooking", "Booking seat: ID=${seat.seat_id}, Name=${seat.seat_name}")
+                Handler(Looper.getMainLooper()).postDelayed({
+                    if (seat.seat_id == -1) {
+                        Log.e("TicketBooking", "Skipping invalid seat: ${seat.seat_name}")
+                        return@postDelayed
+                    }
 
-                RetrofitClient.instance.insertTicket(
-                    userId = userId,
-                    movieId = movieId,
-                    showtimeId = showtimeId,
-                    seatId = seat.seat_id,
-                    ticketPrice = moviePrice
-                ).enqueue(object : Callback<TicketResponse> {
-                    override fun onResponse(call: Call<TicketResponse>, response: Response<TicketResponse>) {
-                        if (response.isSuccessful) {
-                            val ticketResponse = response.body()
-                            if (ticketResponse?.status == "success") {
-                                bookSeat(seat.seat_id)
-                                Log.d("TicketBooking", "Successfully booked seat: ${seat.seat_id}")
-                                bookedSeatsCount++
+                    Log.d("TicketBooking", "Booking seat: ID=${seat.seat_id}, Name=${seat.seat_name}")
+
+                    RetrofitClient.instance.insertTicket(
+                        userId = userId,
+                        movieId = movieId,
+                        showtimeId = showtimeId,
+                        seatId = seat.seat_id,
+                        ticketPrice = moviePrice
+                    ).enqueue(object : Callback<TicketResponse> {
+                        override fun onResponse(call: Call<TicketResponse>, response: Response<TicketResponse>) {
+                            if (response.isSuccessful) {
+                                val ticketResponse = response.body()
+                                if (ticketResponse?.status == "success") {
+                                    bookSeat(seat.seat_id)
+                                    Log.d("TicketBooking", "Successfully booked seat: ${seat.seat_id}")
+                                    bookedSeatsCount++
+                                } else {
+                                    Log.e("TicketBooking", "Server error: ${ticketResponse?.message}")
+                                    Toast.makeText(this@SeatActivity, "Failed to book seat ${seat.seat_name}: ${ticketResponse?.message}", Toast.LENGTH_SHORT).show()
+                                }
                             } else {
-                                Log.e("TicketBooking", "Server error: ${ticketResponse?.message}")
-                                Toast.makeText(this@SeatActivity, "Failed to book seat ${seat.seat_name}: ${ticketResponse?.message}", Toast.LENGTH_SHORT).show()
+                                val errorResponse = response.errorBody()?.string()
+                                Log.e("TicketBooking", "Failed to book seat ${seat.seat_id}. Response: $errorResponse")
+                                Toast.makeText(this@SeatActivity, "Failed to book seat ${seat.seat_name}. Server error.", Toast.LENGTH_SHORT).show()
                             }
-                        } else {
-                            val errorResponse = response.errorBody()?.string()
-                            Log.e("TicketBooking", "Failed to book seat ${seat.seat_id}. Response: $errorResponse")
-                            Toast.makeText(this@SeatActivity, "Failed to book seat ${seat.seat_name}. Server error.", Toast.LENGTH_SHORT).show()
+
+                            if (bookedSeatsCount == totalSeats) {
+                                Toast.makeText(this@SeatActivity, "Seat/s booked successfully", Toast.LENGTH_SHORT).show()
+
+                                bottomSheetDialog?.dismiss()
+                                dimBg.visibility = View.GONE // Hide dim background
+                            }
                         }
 
-                        if (bookedSeatsCount == totalSeats) {
-                            Toast.makeText(this@SeatActivity, "Seat/s booked successfully", Toast.LENGTH_SHORT).show()
+                        override fun onFailure(call: Call<TicketResponse>, t: Throwable) {
+                            Log.e("TicketBooking", "Network error: ${t.message}")
+                            Toast.makeText(this@SeatActivity, "Failed to book seat ${seat.seat_name}. Network error.", Toast.LENGTH_SHORT).show()
                         }
-                    }
-
-                    override fun onFailure(call: Call<TicketResponse>, t: Throwable) {
-                        Log.e("TicketBooking", "Network error: ${t.message}")
-                        Toast.makeText(this@SeatActivity, "Failed to book seat ${seat.seat_name}. Network error.", Toast.LENGTH_SHORT).show()
-                    }
-                })
+                    })
+                }, delayTime)
             }
 
-            Log.d("Payment", "User ID: $userId")
-            Log.d("Payment", "Movie ID: $movieId")
-            Log.d("Payment", "Showtime ID: $showtimeId")
-            Log.d("Payment", "Selected Seats: $selectedSeatIds")
-            Log.d("Payment", "Movie Price: ₱$moviePrice")
-            Log.d("Payment", "Total Price: ₱$totalPrice")
-            Log.d("Payment", "Selected Payment Method: ${selectedPaymentMethod?.text}")
-
-            bottomSheetDialog?.dismiss()
-
-            val intent = Intent(this@SeatActivity, Botnav::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            }
-            startActivity(intent)
-            finish()
+            Handler(Looper.getMainLooper()).postDelayed({
+                val intent = Intent(this@SeatActivity, Botnav::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                }
+                startActivity(intent)
+                finish()
+            }, totalSeats * delayBetweenBookings)
 
         }
 
         bottomSheetDialog?.setOnDismissListener {
             bottomSheetDialog = null
+            dimBg.visibility = View.GONE // Show dim background
         }
 
         bottomSheetDialog?.show()
+
+        dimBg.postDelayed({
+            dimBg.visibility = View.VISIBLE
+        }, 100) // Delay of 200 milliseconds
+
     }
 
     private fun bookSeat(seatId: Int) {

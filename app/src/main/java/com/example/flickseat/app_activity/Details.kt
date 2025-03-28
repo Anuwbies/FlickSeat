@@ -207,6 +207,11 @@ class Details : AppCompatActivity() {
             titleTextView.maxLines = if (titleTextView.maxLines == 1) Integer.MAX_VALUE else 1
             titleTextView.ellipsize = if (titleTextView.maxLines == 1) TextUtils.TruncateAt.END else null
         }
+
+        overviewTextView.setOnClickListener {
+            overviewTextView.maxLines = if (overviewTextView.maxLines == 3) Integer.MAX_VALUE else 3
+            overviewTextView.ellipsize = if (overviewTextView.maxLines == 3) TextUtils.TruncateAt.END else null
+        }
     }
 
 }

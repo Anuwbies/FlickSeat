@@ -118,7 +118,7 @@ class TrailerAdapter(
 
                 val intent = Intent(Intent.ACTION_VIEW, youtubeAppUri)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                intent.setPackage("com.google.android.youtube") // Open in YouTube app if installed
+                intent.setPackage("com.google.android.youtube")
 
                 try {
                     context.startActivity(intent)

@@ -55,6 +55,7 @@ class Details : AppCompatActivity() {
             return
         }
 
+        setupPlaceholderTrailers() // Show placeholders first
         fetchMovieDetails(tmdbId, btnBookSeat)
         fetchMovieTrailers(tmdbId)
     }
@@ -121,21 +122,17 @@ class Details : AppCompatActivity() {
             override fun onResponse(call: Call<TMDBVideoResponse>, response: Response<TMDBVideoResponse>) {
                 if (response.isSuccessful) {
                     val videoResponse = response.body()
-                    if (videoResponse != null && videoResponse.results.isNotEmpty()) {
-                        val trailers = videoResponse.results.filter {
-                            it.site.equals("YouTube", ignoreCase = true) && it.type.equals("Trailer", ignoreCase = true)
-                        }.map { Trailer(it.key, it.name) }
+                    val trailers = videoResponse?.results?.filter {
+                        it.site.equals("YouTube", ignoreCase = true) && it.type.equals("Trailer", ignoreCase = true)
+                    }?.map { Trailer(it.key, it.name) } ?: emptyList()
 
-                        Log.d(TAG, "Trailers fetched: ${trailers.size}")
+                    Log.d(TAG, "Trailers fetched: ${trailers.size}")
 
-                        runOnUiThread {
-                            val trailerRV = findViewById<RecyclerView>(R.id.trailerRV)
-                            trailerRV.layoutManager = LinearLayoutManager(this@Details, LinearLayoutManager.HORIZONTAL, false)
-                            trailerRV.adapter = TrailerAdapter(this@Details, trailers)
-                            trailerRV.visibility = View.VISIBLE
+                    runOnUiThread {
+                        val trailerRV = findViewById<RecyclerView>(R.id.trailerRV)
+                        if (trailers.isNotEmpty()) {
+                            trailerRV.adapter = TrailerAdapter(this@Details, trailers) // Replace placeholders with real trailers
                         }
-                    } else {
-                        Log.e(TAG, "No trailers found")
                     }
                 } else {
                     Log.e(TAG, "TMDB API error: ${response.errorBody()?.string()}")
@@ -147,6 +144,7 @@ class Details : AppCompatActivity() {
             }
         })
     }
+
 
     @SuppressLint("DiscouragedApi", "SetTextI18n")
     private fun displayMovieDetails(movie: Movie) {
@@ -175,8 +173,8 @@ class Details : AppCompatActivity() {
 
         Glide.with(this)
             .load(posterUrl)
-            .placeholder(R.drawable.btn_empty)
-            .error(R.drawable.btn_empty)
+            .placeholder(R.color.background)
+            .error(R.color.background)
             .listener(object : com.bumptech.glide.request.RequestListener<android.graphics.drawable.Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,
@@ -203,15 +201,25 @@ class Details : AppCompatActivity() {
             })
             .into(posterImageView)
 
-        titleTextView.setOnClickListener {
-            titleTextView.maxLines = if (titleTextView.maxLines == 1) Integer.MAX_VALUE else 1
-            titleTextView.ellipsize = if (titleTextView.maxLines == 1) TextUtils.TruncateAt.END else null
+        fun TextView.toggleExpansion(collapsedLines: Int) {
+            maxLines = if (maxLines == collapsedLines) Integer.MAX_VALUE else collapsedLines
+            ellipsize = if (maxLines == collapsedLines) TextUtils.TruncateAt.END else null
         }
-
-        overviewTextView.setOnClickListener {
-            overviewTextView.maxLines = if (overviewTextView.maxLines == 3) Integer.MAX_VALUE else 3
-            overviewTextView.ellipsize = if (overviewTextView.maxLines == 3) TextUtils.TruncateAt.END else null
-        }
+        titleTextView.setOnClickListener { it as TextView; it.toggleExpansion(1) }
+        overviewTextView.setOnClickListener { it as TextView; it.toggleExpansion(3) }
     }
+
+    private fun setupPlaceholderTrailers() {
+        val trailerRV = findViewById<RecyclerView>(R.id.trailerRV)
+        trailerRV.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+
+        // Placeholder trailers (empty or loading indicators)
+        val placeholderTrailers = listOf(
+            Trailer("", "Loading...")
+        )
+
+        trailerRV.adapter = TrailerAdapter(this, placeholderTrailers)
+    }
+
 
 }

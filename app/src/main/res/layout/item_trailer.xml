@@ -10,19 +10,6 @@
         android:layout_width="160dp"
         android:layout_height="90dp"
         android:scaleType="centerCrop"
-        android:visibility="gone"
-        android:src="@color/background"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/dummytrailer"
-        android:layout_width="160dp"
-        android:layout_height="90dp"
-        android:scaleType="centerCrop"
-        android:visibility="visible"
         android:src="@color/background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -34,10 +21,10 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@+id/dummytrailer"
-        app:layout_constraintEnd_toEndOf="@+id/dummytrailer"
-        app:layout_constraintStart_toStartOf="@+id/dummytrailer"
-        app:layout_constraintTop_toTopOf="@+id/dummytrailer" />
+        app:layout_constraintBottom_toBottomOf="@+id/trailer"
+        app:layout_constraintEnd_toEndOf="@+id/trailer"
+        app:layout_constraintStart_toStartOf="@+id/trailer"
+        app:layout_constraintTop_toTopOf="@+id/trailer" />
 
     <ImageView
         android:id="@+id/playIcon"

@@ -197,6 +197,7 @@
                 android:layout_marginTop="5dp"
                 android:background="@color/black"
                 android:orientation="horizontal"
+                android:visibility="visible"
                 android:overScrollMode="never"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

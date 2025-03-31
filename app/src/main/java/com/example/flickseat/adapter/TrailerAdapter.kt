@@ -64,23 +64,21 @@ class TrailerAdapter(
 
     inner class TrailerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(trailer: Trailer) {
-            val dummyTrailer: ImageView = itemView.findViewById(R.id.dummytrailer)
             val trailerImage: ImageView = itemView.findViewById(R.id.trailer)
             val playIcon: ImageView = itemView.findViewById(R.id.playIcon)
             val loading: View = itemView.findViewById(R.id.loading)
 
-            // Show loading spinner and dummy trailer before loading the actual image
-            dummyTrailer.visibility = View.VISIBLE
+            // Show loading spinner and hide play icon while loading
             loading.visibility = View.VISIBLE
             playIcon.visibility = View.GONE
-            trailerImage.visibility = View.GONE  // Hide real trailer until loaded
+            trailerImage.visibility = View.VISIBLE // Hide the image until loaded
 
             val thumbnailUrl = "https://img.youtube.com/vi/${trailer.youtubeId}/hqdefault.jpg"
 
             Glide.with(context)
                 .load(thumbnailUrl)
-                .placeholder(R.color.background) // Use an actual loading drawable
-                .error(R.color.background) // Show an error image if failed
+                .placeholder(R.color.background) // Placeholder while loading
+                .error(R.color.background) // Show error background if failed
                 .listener(object : com.bumptech.glide.request.RequestListener<android.graphics.drawable.Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,
@@ -88,10 +86,9 @@ class TrailerAdapter(
                         target: com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable>?,
                         isFirstResource: Boolean
                     ): Boolean {
-                        loading.visibility = View.GONE // Ensure loading indicator hides if failed
-                        dummyTrailer.visibility = View.VISIBLE // Keep dummy as fallback
-                        trailerImage.visibility = View.GONE
-                        playIcon.visibility = View.GONE
+                        loading.visibility = View.GONE // Hide loading indicator
+                        trailerImage.visibility = View.VISIBLE // Show trailer image even if failed
+                        playIcon.visibility = View.GONE // Keep play icon hidden
                         return false
                     }
 
@@ -102,10 +99,9 @@ class TrailerAdapter(
                         dataSource: com.bumptech.glide.load.DataSource?,
                         isFirstResource: Boolean
                     ): Boolean {
-                        loading.visibility = View.GONE // Hide loading indicator when ready
-                        dummyTrailer.visibility = View.GONE // Hide dummy image
-                        trailerImage.visibility = View.VISIBLE // Show actual thumbnail
-                        playIcon.visibility = View.VISIBLE // Show play button
+                        loading.visibility = View.GONE // Hide loading indicator
+                        trailerImage.visibility = View.VISIBLE // Show loaded trailer image
+                        playIcon.visibility = View.VISIBLE // Show play icon after loading
                         return false
                     }
                 })
@@ -126,8 +122,6 @@ class TrailerAdapter(
                     context.startActivity(Intent(Intent.ACTION_VIEW, webUri))
                 }
             }
-
         }
-
     }
 }

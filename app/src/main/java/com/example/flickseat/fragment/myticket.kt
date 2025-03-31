@@ -31,7 +31,8 @@ class myticket : Fragment() {
 
     private var ticketList: MutableList<Ticket> = mutableListOf()
     private var filteredTicketList: MutableList<Ticket> = mutableListOf()
-    private val statusList: List<String> = listOf("All", "Pending", "Confirmed", "Cancelled", "Used")
+    private val statusList: List<String> = listOf("All", "pending", "confirmed", "cancelled", "used")
+        .map { it.replaceFirstChar { char -> char.uppercase() } }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -120,7 +121,7 @@ class myticket : Fragment() {
         if (status == "All") {
             filteredTicketList.addAll(ticketList)
         } else {
-            filteredTicketList.addAll(ticketList.filter { it.status == status })
+            filteredTicketList.addAll(ticketList.filter { it.status.equals(status, ignoreCase = true) })
         }
 
         ticketAdapter.notifyDataSetChanged()

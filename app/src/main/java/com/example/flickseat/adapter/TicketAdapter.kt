@@ -41,7 +41,7 @@ class TicketAdapter(private val ticketList: List<Ticket>) :
             tvTitle.text = ticket.movie_title
             tvDay.text = "Day: ${ticket.show_day}"
             tvTime.text = "Time: ${ticket.show_time}"
-            tvStatus.text = "Status: ${ticket.status}"
+            tvStatus.text = "Status: ${ticket.status.replaceFirstChar { it.uppercase() }}"
             tvSeatName.text = "Seat ${ticket.seat_name}"
         }
     }
